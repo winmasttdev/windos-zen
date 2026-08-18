@@ -1,0 +1,16 @@
+# Build artifacts
+/airootfs/root/calamares-*.pkg.tar.zst
+/out/
+work/
+*.iso
+*.qcow2
+*.log
+
+# Python
+__pycache__/
+*.pyc
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store

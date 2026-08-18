@@ -1,0 +1,93 @@
+/*=============================================================================
+  windOS Zen — Calamares theme
+  Calm indigo "zen" palette on deep navy. Glassy panels, soft accents.
+  =============================================================================*/
+QWidget {
+    color: #d7e0f4;
+    background-color: #0b0f1a;
+    font-family: "Noto Sans", "DejaVu Sans", sans-serif;
+    font-size: 11pt;
+}
+QWidget#sidebarFrame {
+    background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+        stop:0 #141a2e, stop:1 #0a0e1a);
+    border-right: 1px solid #232b3d;
+}
+QFrame#sidebar {
+    background: transparent;
+}
+QLabel#sidebarText {
+    color: #b9c2ff;
+    font-size: 13pt;
+    font-weight: bold;
+    padding: 12px;
+}
+QLabel#sidebarImage {
+    padding: 16px;
+}
+QPushButton {
+    background-color: #161d31;
+    color: #d7e0f4;
+    border: 1px solid #2b3550;
+    border-radius: 8px;
+    padding: 9px 16px;
+}
+QPushButton:hover {
+    background-color: #3b49c7;
+    color: #ffffff;
+    border-color: #5b6bff;
+}
+QPushButton:pressed {
+    background-color: #2a3594;
+}
+QPushButton:disabled {
+    background-color: #11162a;
+    color: #4a5572;
+    border-color: #1c2336;
+}
+QPushButton#quitButton { background-color: #1a1530; border-color: #34284f; }
+QPushButton#backButton, QPushButton#nextButton { min-width: 96px; font-weight: bold; }
+QListView, QTreeView, QScrollArea, QTextEdit {
+    background-color: #070b16;
+    border: 1px solid #232b3d;
+    border-radius: 8px;
+    selection-background-color: #3b49c7;
+    selection-color: #ffffff;
+}
+QProgressBar {
+    background-color: #070b16;
+    border: 1px solid #232b3d;
+    border-radius: 6px;
+    text-align: center;
+    color: #b9c2ff;
+    height: 18px;
+}
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0,
+        stop:0 #5b6bff, stop:1 #8b8cff);
+    border-radius: 5px;
+}
+QLineEdit, QComboBox {
+    background-color: #070b16;
+    border: 1px solid #2b3550;
+    border-radius: 6px;
+    padding: 6px;
+    color: #d7e0f4;
+}
+QLineEdit:focus, QComboBox:focus {
+    border: 1px solid #5b6bff;
+}
+QComboBox QAbstractItemView {
+    background-color: #070b16;
+    color: #d7e0f4;
+    selection-background-color: #3b49c7;
+}
+QToolTip {
+    background-color: #141a2e;
+    color: #d7e0f4;
+    border: 1px solid #2b3550;
+    border-radius: 6px;
+}
+QLabel#stepTitle { color: #b9c2ff; font-weight: bold; font-size: 15pt; }
+QLabel#subTitle  { color: #8a93a8; font-size: 11pt; }
+QLabel#welcomeTitle { color: #ffffff; font-weight: bold; font-size: 20pt; }

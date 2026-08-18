@@ -1,0 +1,76 @@
+#!/usr/bin/env bash
+#
+# windfetch — windOS Zen system information tool (zero external deps)
+# Prints the windOS cloud ASCII logo beside live system stats, styled in
+# the windOS blue. Works in any POSIX-ish shell but tuned for zsh.
+#
+set -o pipefail 2>/dev/null || true
+
+LOGO="/usr/share/windos/logo-ascii.txt"
+RST=$'\033[0m'
+BOLD=$'\033[1m'
+C_BLUE=$'\033[38;2;59;130;246m'
+C_LBLUE=$'\033[38;2;130;170;250m'
+C_GREY=$'\033[38;2;150;160;180m'
+C_WHITE=$'\033[38;2;235;238;245m'
+
+# --- gather ---------------------------------------------------------------
+user="$(id -un 2>/dev/null)"
+host="$(hostname 2>/dev/null)"
+kernel="$(uname -r 2>/dev/null)"
+os="windOS Zen"
+packages="$(pacman -Qq 2>/dev/null | wc -l)"
+shell="$(basename "${SHELL:-/bin/zsh}")"
+
+if uptime -p >/dev/null 2>&1; then
+    uptime="$(uptime -p | sed 's/^up //')"
+else
+    uptime="$(awk '{printf "%d min", int($1/60)}' /proc/uptime)"
+fi
+
+cpu="$(grep -m1 'model name' /proc/cpuinfo 2>/dev/null | cut -d: -f2- | sed 's/^[ \t]*//')"
+cpu="${cpu:-unknown}"
+if command -v nproc >/dev/null; then cores="$(nproc)"; cpu="$cpu ($cores)"; fi
+
+mem_line="$(free -m 2>/dev/null | awk '/^Mem:/ {print $3"MiB / "$2"MiB"}')"
+mem="${mem_line:-?}"
+
+wm="${XDG_CURRENT_DESKTOP:-${DESKTOP_SESSION:-tty}}"
+[[ "$wm" == ":"* ]] && wm="Fluxbox"
+
+res="$(command -v xrandr >/dev/null && xrandr 2>/dev/null | awk '/\*+/ {print $1; exit}')"
+res="${res:-?}"
+
+# --- info rows ------------------------------------------------------------
+info=(
+    "${C_BLUE}user${RST}    ${C_WHITE}$user${RST}"
+    "${C_BLUE}host${RST}    ${C_WHITE}$host${RST}"
+    "${C_BLUE}os${RST}      ${C_WHITE}$os${RST}"
+    "${C_BLUE}kernel${RST}  ${C_WHITE}$kernel${RST}"
+    "${C_BLUE}uptime${RST}  ${C_WHITE}$uptime${RST}"
+    "${C_BLUE}pkgs${RST}    ${C_WHITE}$packages${RST}"
+    "${C_BLUE}shell${RST}   ${C_WHITE}$shell${RST}"
+    "${C_BLUE}wm${RST}      ${C_WHITE}$wm${RST}"
+    "${C_BLUE}res${RST}     ${C_WHITE}$res${RST}"
+    "${C_BLUE}cpu${RST}     ${C_WHITE}$cpu${RST}"
+    "${C_BLUE}memory${RST}  ${C_WHITE}$mem${RST}"
+)
+
+# --- render: logo left, info right ---------------------------------------
+if [[ -r "$LOGO" ]]; then
+    mapfile -t logo_lines < "$LOGO"
+else
+    logo_lines=(" (windOS) ")
+fi
+
+max_logo=${#logo_lines[@]}
+max_info=${#info[@]}
+rows=$(( max_logo > max_info ? max_logo : max_info ))
+
+printf "${BOLD}${C_LBLUE}      windOS Zen — Lighter Than Air${RST}\n\n"
+for ((i=0; i<rows; i++)); do
+    l="${logo_lines[$i]:-}"
+    inf="${info[$i]:-}"
+    printf "${C_BLUE}%-46s${RST}   %s\n" "$l" "$inf"
+done
+printf "\n"

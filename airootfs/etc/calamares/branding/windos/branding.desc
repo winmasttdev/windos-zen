@@ -1,0 +1,14 @@
+---
+componentName: windos
+slideshow: "slideshow.qml"
+stylesheet: "calamares.qss"
+welcomeStyleCalamares: false
+welcomeStyleLogo: "logo.png"
+windowWidth: 920
+windowHeight: 640
+sidebarImage: "logo.png"
+sidebarText: "windOS Zen — Lighter Than Air"
+productName: "windOS Zen"
+version: "2026"
+shortVersion: "Zen"
+shortProductName: "windOS"

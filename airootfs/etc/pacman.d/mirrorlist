@@ -1,0 +1,2 @@
+Server = https://archlinux.ip-connect.vn.ua/$repo/os/$arch
+Server = https://mirror.mirohost.net/archlinux/$repo/os/$arch

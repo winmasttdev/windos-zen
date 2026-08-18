@@ -1,0 +1,55 @@
+---
+#=============================================================================
+# windOS Zen — netinstall groups (Calamares packagechooser / netinstall)
+# The live system is unpacked into the target (unpackfs), then the selected
+# desktop environment group is installed on top. All editions share LightDM.
+#=============================================================================
+groups:
+    - name: "Fluxbox Edition (Ultra-Light)"
+      description: "Pre-themed windOS Fluxbox. Tuned for max FPS, lowest RAM (<200 MB idle)."
+      packages:
+          - fluxbox
+          - picom
+          - feh
+          - rofi
+          - alacritty
+
+    - name: "windOS Modern GNOME (Glassmorphic)"
+      description: "Aesthetic GNOME with Dash-to-Dock, Blur-my-Shell, AppIndicator, User Themes."
+      packages:
+          - gnome
+          - gnome-shell
+          - gnome-shell-extensions
+          - gnome-tweaks
+          - dash-to-dock
+          - blur-my-shell
+          - gnome-shell-extension-appindicator
+          - gnome-shell-extension-user-theme
+
+    - name: "XFCE4 Edition (Modernized Lightweight)"
+      description: "XFCE4 with a Fluent dark GTK theme. Light, fast, familiar."
+      selected: true
+      packages:
+          - xfce4
+          - xfce4-goodies
+
+    - name: "KDE Plasma Edition (Sleek, de-blobbed)"
+      description: "Plasma desktop with background telemetry stripped."
+      packages:
+          - plasma-meta
+          - kde-applications-meta
+
+    - name: "LXQt Edition (Pure Qt for potato PCs)"
+      description: "Featherweight Qt desktop for the weakest hardware."
+      packages:
+          - lxqt
+          - breeze-icons
+
+    - name: "Tiling / Minimalist Extras"
+      description: "For advanced users: i3, Sway/Labwc, or Openbox + a lean toolset."
+      packages:
+          - i3-wm
+          - picom
+          - rofi
+          - alacritty
+          - feh

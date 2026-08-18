@@ -1,0 +1,11 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Install windOS Zen
+GenericName=System Installer
+Comment=Install windOS Zen to this computer
+Exec=calamares
+Icon=/usr/share/calamares/branding/windos/logo.png
+Terminal=false
+Categories=System;
+StartupNotify=true

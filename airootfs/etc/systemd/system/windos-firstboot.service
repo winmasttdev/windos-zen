@@ -1,0 +1,12 @@
+[Unit]
+Description=windOS Zen first-boot optimization pass
+ConditionPathExists=!/var/lib/windos-post-install.done
+After=network.target
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/windos-post-install.sh
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

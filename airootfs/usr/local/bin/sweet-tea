@@ -1,0 +1,33 @@
+#!/usr/bin/env bash
+#
+# windOS Zen — secret egg.
+# Somewhere between the optimization and the boot splash, we stopped to make
+# tea. Type `sweet-tea` (or `tea`) and relax. This is undocumented on purpose.
+#
+set -e
+
+BREW="${1:-windos-zen}"
+
+cat <<'ART'
+        (
+         )  (
+      (   (    )  )
+       )   )  (   (
+     (    (    )   )
+     )   (    )  (   )
+    (  ( )   )  (  )  )
+      ) (   )  (  ) (
+       (  )  (   )  )
+   ~~~~~~~~~~~~~~~~~~~~~~~
+   \    sweet   tea    /
+    \_________________/
+        |         |
+        |  ~~~~   |
+        \_________/
+ART
+
+echo
+echo "  brewing a cup of ${BREW} sweet tea..."
+echo "  calibrated for your very low-RAM machine. sip slowly. ☕"
+echo
+echo "  (psst — you found the egg. now breathe. the ISO will be fine.)"

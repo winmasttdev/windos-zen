@@ -1,0 +1,76 @@
+#=============================================================================
+# windOS Zen — Starship prompt preset
+# A clean, glassy blue prompt with a cloud flourish.
+#=============================================================================
+
+# Top-line blank separator
+add_newline = true
+
+[character]
+success_symbol = "[➜](bold #3b82f6)"
+error_symbol   = "[✗](bold #ef4444)"
+symbol = "➜"
+
+[username]
+style_user  = "bold #e6e9f0"
+style_root  = "bold #ef4444"
+format      = "[$user]($style) "
+disabled    = false
+
+[hostname]
+ssh_only = false
+style    = "bold #82aaff"
+format   = "@[$hostname]($style) "
+
+[directory]
+style          = "bold #5b9dff"
+format         = "[$path]($style) "
+truncation_length = 3
+truncation_symbol  = "…/"
+
+[git_branch]
+symbol      = "🌿 "
+style       = "bold #8be9fd"
+format      = "[$symbol$branch]($style) "
+
+[git_status]
+style             = "bold #ffb86c"
+conflicted        = "="
+ahead             = "⇡${count}"
+behind            = "⇣${count}"
+diverged          = "⇕"
+stashed           = "$"
+modified          = "●"
+staged            = "+"
+untracked         = "?"
+deleted           = "✗"
+
+[python]
+symbol = "🐍 "
+style  = "bold #ffd866"
+format = '[$symbol$version]($style) '
+
+[memory_usage]
+disabled    = false
+threshold   = 60
+symbol      = "🧠 "
+style       = "bold #c792ea"
+format      = "[$symbol${used_memory}]($style) "
+
+[time]
+disabled = false
+style    = "bold #6272a4"
+format   = "[$time]($style) "
+
+[cmd_duration]
+min_time = 2000
+style    = "bold #f78c6c"
+format   = "[⏱ $duration]($style) "
+
+# The windOS cloud flourish
+[custom.windos]
+command     = "echo '☁'"
+when        = true
+shell       = "sh"
+style       = "bold #3b82f6"
+format      = "[$output]($style) "

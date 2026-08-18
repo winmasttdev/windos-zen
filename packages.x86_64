@@ -1,0 +1,136 @@
+#=============================================================================
+# windOS Zen — package list (x86_64)
+#=============================================================================
+# Module 1/2 scope: base live system, Linux-Zen, Plymouth, Fluxbox live
+# session, and the Calamares installer (configured in Module 4).
+# Desktop environments offered at install time are pulled by Calamares'
+# netinstall module (Module 4) — they are NOT pre-installed on the ISO.
+#
+# NOTE: no inline comments on package lines. mkarchiso reads this file with
+# `mapfile`, which preserves trailing whitespace, so a "pkg   # note" line
+# would become the literal (space-padded) target "pkg   " and fail to resolve.
+# Calamares itself is built from the AUR on the host and injected as a local
+# package (see scripts/build-calamares.sh); only its runtime deps live here.
+
+# --- Core base
+base
+base-devel
+linux-zen
+linux-zen-headers
+linux-firmware
+archiso
+mkinitcpio
+mkinitcpio-archiso
+pacman
+systemd
+sudo
+
+# --- Boot splash
+plymouth
+
+# --- ZRAM (Module 6, enabled live too)
+zram-generator
+
+# --- Filesystems / disk tools
+dosfstools
+exfatprogs
+ntfs-3g
+e2fsprogs
+xfsprogs
+btrfs-progs
+gptfdisk
+parted
+gparted
+
+# --- Networking
+networkmanager
+networkmanager-openconnect
+wpa_supplicant
+dhcpcd
+iproute2
+iw
+openresolv
+
+# --- Live session: XFCE (default desktop)
+xorg-server
+xorg-xinit
+xorg-xrandr
+xorg-setxkbmap
+xfce4
+xfce4-goodies
+network-manager-applet
+xfce4-pulseaudio-plugin
+lightdm
+lightdm-gtk-greeter
+
+# --- Shell / utilities
+bash
+zsh
+starship
+zsh-autosuggestions
+zsh-syntax-highlighting
+zsh-history-substring-search
+zsh-completions
+nano
+vim
+curl
+wget
+git
+librsvg
+imagemagick
+zip
+unzip
+
+# --- System fetch / ASCII branding (neofetch was dropped from the repos;
+#     fastfetch + the custom windfetch tool cover the ASCII branding)
+fastfetch
+
+# --- Audio (PipeWire, lightweight)
+pipewire
+pipewire-pulse
+wireplumber
+alsa-utils
+pavucontrol
+
+# --- Memory protection for low-end PCs
+earlyoom
+
+# --- XDG / fonts / misc runtime
+xdg-user-dirs
+xdg-utils
+gvfs
+noto-fonts
+ttf-dejavu
+otf-font-awesome
+
+# --- Installer host dependencies
+grub
+efibootmgr
+os-prober
+rsync
+arch-install-scripts
+mtools
+syslinux
+
+# --- Installer runtime (calamares is built from AUR; these are its deps)
+polkit
+polkit-qt6
+qt6-base
+qt6-svg
+qt6-declarative
+kconfig
+kcoreaddons
+kdeclarative
+ki18n
+kio
+kservice
+kwidgetsaddons
+kwindowsystem
+kxmlgui
+kpmcore
+libpwquality
+yaml-cpp
+boost-libs
+
+# --- Diagnostics
+memtest86+

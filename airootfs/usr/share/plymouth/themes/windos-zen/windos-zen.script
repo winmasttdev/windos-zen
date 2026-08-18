@@ -1,0 +1,54 @@
+#=============================================================================
+# windOS Zen — Plymouth theme script (script engine)
+#
+# Design goals:
+#   * Centered cloud logo on a soft LIGHT background (per brand).
+#   * Smooth fade-in at boot, gentle "breathing" pulse, clean fade-out
+#     on quit. No spinning throbber -> zero flicker on low-end GPUs.
+#   * Single blitted image -> cheap on weak hardware.
+#
+# Colors are floats in the 0.0..1.0 range.
+#=============================================================================
+
+# --- Background: pure white top -> faint cool bottom -----------------------
+Window.SetBackgroundTopColor(1.0, 1.0, 1.0)
+Window.SetBackgroundBottomColor(0.93, 0.95, 0.98)
+
+# --- Load and center the cloud logo ----------------------------------------
+logo = Image("windos-logo.png")
+logo_sprite = Sprite()
+logo_sprite.SetImage(logo)
+logo_sprite.SetPosition(
+    (Window.GetWidth()  - logo.GetWidth())  / 2,
+    (Window.GetHeight() - logo.GetHeight()) / 2
+)
+
+# Start fully transparent; we fade in.
+logo_sprite.SetOpacity(0)
+
+# --- Fade-in: ramp opacity up to 1.0 ---------------------------------------
+Plymouth.MainLoopRegisterCallback(function()
+    local o = logo_sprite.GetOpacity()
+    if o < 1.0 then
+        logo_sprite.SetOpacity(math.min(1.0, o + 0.025))
+    end
+end)
+
+# --- Breathing pulse once fully visible ------------------------------------
+Plymouth.MainLoopRegisterCallback(function()
+    if logo_sprite.GetOpacity() >= 1.0 then
+        local t = Plymouth.GetTime()
+        local pulse = 0.90 + 0.10 * ((math.sin(t / 650) + 1) / 2)
+        logo_sprite.SetOpacity(pulse)
+    end
+end)
+
+# --- Clean fade-out on quit (return false to delay shutdown) ---------------
+Plymouth.SetQuitFunction(function()
+    local o = logo_sprite.GetOpacity()
+    if o > 0.0 then
+        logo_sprite.SetOpacity(math.max(0.0, o - 0.06))
+        return false
+    end
+    return true
+end)

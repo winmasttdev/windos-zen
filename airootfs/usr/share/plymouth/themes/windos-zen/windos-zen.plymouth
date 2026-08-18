@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=windOS Zen
+Description=Clean, light, flicker-free boot splash for windOS Zen. Centered cloud on a soft light background.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/windos-zen
+ScriptFile=/usr/share/plymouth/themes/windos-zen/windos-zen.script
