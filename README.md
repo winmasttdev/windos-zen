@@ -212,23 +212,29 @@ Module configs: `welcome`, `locale`, `keyboard`, `partition`, `users`,
 `unpackfs`, `displaymanager`, `services`.
 </details>
 
-### 8. Native PySide6 installer (prototype)
+### 8. Native PySide6 installer
 
-A from-scratch **native** installer was prototyped in `windos-installer.py`
-(Python + **PySide6**) as an alternative to Calamares &mdash; fast, no browser,
-no lag.
+A from-scratch **native** installer lives in `windos-installer/` (Python +
+**PySide6**) as a lightweight, lag-free alternative to Calamares.
 
-- Wizard pages: **Welcome → Disk → User → Summary → Progress → Finish**.
-- Backend drives the same real tools ( `parted`, `unsquashfs`, `genfstab`,
-  `arch-chroot`, `grub-install`, `mkinitcpio`).
-- **Dry-run mode** (default on) only *prints* the commands it would run &mdash;
-  safe to open on a real machine for preview.
-- Work runs in a `QThread` so the UI never freezes.
+- Wizard pages: **Welcome → Disk → User → Summary → Progress → Finish**, with a
+  neon-glass stepper sidebar and inline SVG branding (no asset files).
+- Backend (`backend/installer.py`) drives the real tools &mdash; `parted`,
+  `mkfs`, `mount`, `pacstrap`, `genfstab`, `arch-chroot`, `grub-install`,
+  `plymouth` &mdash; with correct **EFI + nvme partition naming**.
+- **Safe by default**: it boots in *preview (dry-run)* mode and never touches a
+  disk unless you explicitly uncheck the "do NOT touch my disks" box. In
+  dry-run it only *logs* the exact commands it would run.
+- Work runs in a `QThread` (`backend/worker.py`) so the UI never freezes; the
+  log + progress bar update live.
 
-The full design brief handed to a code-generation model lives at
-[`windos-installer/PROMPT.md`](windos-installer/PROMPT.md), and was written
-against the verified host environment (Arch x86_64, Python 3.14, PySide6 6.11,
-UEFI).
+```bash
+cd windos-installer
+pip install -r requirements.txt
+python main.py                 # or: python -m windos_installer
+```
+
+The design brief is [`windos-installer/PROMPT.md`](windos-installer/PROMPT.md).
 
 ---
 
@@ -253,9 +259,12 @@ windos-zen/
 │   │   └── calamares-*.pkg.tar.zst  # injected Calamares (gitignored)
 │   └── usr/local/bin/            # sweet-tea, windfetch, windos-post-install.sh
 ├── ascii/  assets/               # branding art / artwork
-├── windos-installer.py           # prototype native PySide6 installer
-├── windos-installer/
-│   └── PROMPT.md                 # design brief for the installer
+├── windos-installer/             # native PySide6 installer (package)
+│   ├── main.py  __main__.py      # app window + entry point
+│   ├── requirements.txt
+│   ├── ui/                       # icons, theme, wizard pages
+│   ├── backend/                  # installer logic + QThread worker
+│   └── PROMPT.md                 # design brief fed to a code-gen model
 ├── README.md  LICENSE  .gitignore
 ```
 
