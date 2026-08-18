@@ -28,7 +28,7 @@ WINDOS_STYLESHEET = f"""
 QLabel {{
     background: transparent;
 }}
-QMainWindow, QWidget {{
+QMainWindow {{
     background: {BG_DEEP};
 }}
 #Header {{
@@ -77,7 +77,7 @@ QLabel#FieldLabel {{
     font-size: 12px; color: {TEXT_DIM}; padding-bottom: 4px;
 }}
 QLineEdit, QComboBox {{
-    background: {BG_DEEP}; border: 1px solid {BORDER};
+    background: transparent; border: 1px solid {BORDER};
     border-radius: 10px; padding: 10px 12px; font-size: 14px;
     color: {TEXT};
 }}
