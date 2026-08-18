@@ -70,7 +70,7 @@ class MainWindow(QMainWindow):
         hb = QHBoxLayout(header)
         hb.setContentsMargins(18, 12, 18, 12)
         self.lbl_logo = QLabel()
-        self.lbl_logo.setPixmap(icon_windos(26).pixmap(26, 26))
+        self.lbl_logo.setPixmap(icon_windos(20).pixmap(20, 20))
         hb.addWidget(self.lbl_logo)
         self.lbl_title = QLabel("windOS Zen Installer")
         self.lbl_title.setObjectName("HeaderTitle")
@@ -94,17 +94,17 @@ class MainWindow(QMainWindow):
         sb.setSpacing(6)
         self.steps = []
         for i, (txt, ic) in enumerate([
-            ("Welcome", icon_windos(18)),
-            ("Disk", icon_disk(18)),
-            ("User", icon_user(18)),
-            ("Summary", icon_summary(18)),
-            ("Install", icon_install(18)),
+            ("Welcome", icon_windos(16)),
+            ("Disk", icon_disk(16)),
+            ("User", icon_user(16)),
+            ("Summary", icon_summary(16)),
+            ("Install", icon_install(16)),
         ]):
             row = QHBoxLayout()
             row.setSpacing(10)
             step_ic = QLabel()
-            step_ic.setPixmap(ic.pixmap(18, 18))
-            step_ic.setFixedSize(22, 22)
+            step_ic.setPixmap(ic.pixmap(16, 16))
+            step_ic.setFixedSize(18, 18)
             step_lbl = QLabel(txt)
             step_lbl.setObjectName("StepLabel")
             row.addWidget(step_ic)

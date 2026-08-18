@@ -25,6 +25,9 @@ WINDOS_STYLESHEET = f"""
     font-family: {FONT};
     color: {TEXT};
 }}
+QLabel {{
+    background: transparent;
+}}
 QMainWindow, QWidget {{
     background: {BG_DEEP};
 }}
