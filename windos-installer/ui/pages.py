@@ -94,9 +94,9 @@ class WelcomePage(QWidget):
     def _on_toggled(self, checked):
         # checked == preview == dry-run
         if checked:
-            self.dry_run_card.setStyleSheet("border:1px solid #38BDF8;")
+            self.dry_run_card.setStyleSheet("border:1px solid #3B82F6;")
         else:
-            self.dry_run_card.setStyleSheet("border:1px solid #F43F5E;")
+            self.dry_run_card.setStyleSheet("border:1px solid #EF4444;")
         self.dry_run_changed.emit(checked)
 
     def is_dry_run(self) -> bool:

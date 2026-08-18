@@ -24,7 +24,7 @@ from PySide6.QtWidgets import (
     QPushButton, QFrame, QVBoxLayout, QHBoxLayout, QSizePolicy,
 )
 from PySide6.QtCore import Qt, QSize
-from PySide6.QtGui import QIcon
+from PySide6.QtGui import QIcon, QFont, QPalette, QColor
 
 from ui.theme import WINDOS_STYLESHEET
 from ui.icons import (
@@ -72,7 +72,7 @@ class MainWindow(QMainWindow):
         self.lbl_logo = QLabel()
         self.lbl_logo.setPixmap(icon_windos(26).pixmap(26, 26))
         hb.addWidget(self.lbl_logo)
-        self.lbl_title = QLabel("windOS Zen")
+        self.lbl_title = QLabel("windOS Zen Installer")
         self.lbl_title.setObjectName("HeaderTitle")
         hb.addWidget(self.lbl_title)
         hb.addStretch(1)
@@ -195,7 +195,7 @@ class MainWindow(QMainWindow):
             self.btn_next.setStyleSheet("")
             self.btn_next.setEnabled(self.page_user.validate())
         elif idx == 3:
-            self.btn_next.setText("Install windOS Zen ")
+            self.btn_next.setText("Install")
             if self.config.dry_run:
                 self.btn_next.setObjectName("PrimaryButton")
             else:
@@ -276,6 +276,24 @@ class MainWindow(QMainWindow):
 
 def main():
     app = QApplication(sys.argv)
+    app.setStyle("Fusion")
+    # Force a dark palette so the theme is consistent regardless of the
+    # host desktop environment / QSS quirks.
+    pal = QPalette()
+    pal.setColor(QPalette.ColorRole.Window, QColor("#050505"))
+    pal.setColor(QPalette.ColorRole.WindowText, QColor("#F4F4F5"))
+    pal.setColor(QPalette.ColorRole.Base, QColor("#121212"))
+    pal.setColor(QPalette.ColorRole.AlternateBase, QColor("#18181B"))
+    pal.setColor(QPalette.ColorRole.Text, QColor("#F4F4F5"))
+    pal.setColor(QPalette.ColorRole.Button, QColor("#18181B"))
+    pal.setColor(QPalette.ColorRole.ButtonText, QColor("#F4F4F5"))
+    pal.setColor(QPalette.ColorRole.Highlight, QColor("#3B82F6"))
+    pal.setColor(QPalette.ColorRole.HighlightedText, QColor("#FFFFFF"))
+    pal.setColor(QPalette.ColorRole.Link, QColor("#3B82F6"))
+    pal.setColor(QPalette.ColorRole.ToolTipBase, QColor("#18181B"))
+    pal.setColor(QPalette.ColorRole.ToolTipText, QColor("#F4F4F5"))
+    app.setPalette(pal)
+    app.setFont(QFont("Plus Jakarta Sans", 10))
     app.setApplicationName("windOS Zen Installer")
     app.setStyleSheet(WINDOS_STYLESHEET)
     win = MainWindow()
