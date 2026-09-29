@@ -1,0 +1,30 @@
+#!/bin/sh
+# ============================================================================
+#  windOS Zen — live-build auto/config (Module 1)
+#  Base: Debian 13 "Trixie" (NOT Bookworm). BIOS + UEFI, Fluxbox live session.
+#  Usage: lb config && lb build   (or ./build-iso.sh)
+# ============================================================================
+set -e
+lb config noauto \
+  --mode debian \
+  --distribution trixie \
+  --archive-areas "main contrib non-free non-free-firmware" \
+  --updates true \
+  --security true \
+  --backports false \
+  --binary-images iso-hybrid \
+  --architectures amd64 \
+  --linux-flavours amd64 \
+  --bootloaders "syslinux grub-efi" \
+  --iso-application "windOS Zen" \
+  --iso-publisher "windOS Team" \
+  --iso-volume "WINDOS_ZEN" \
+  --image-name "windos-zen-1.0-trixie-amd64" \
+  --checksums sha256 \
+  --firmware-binary true \
+  --firmware-chroot true \
+  --memtest memtest86+ \
+  --win32-loader false \
+  --bootappend-live "hostname=windos-zen" \
+  --debian-installer none \
+  "${@}"

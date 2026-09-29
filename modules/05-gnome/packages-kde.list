@@ -1,0 +1,13 @@
+# windOS Zen — KDE Plasma edition package list (Debian 13 Trixie)
+# Installed when the user picks "KDE Plasma Edition" in Calamares.
+# All names verified present in Trixie (incl. arc-kde: "Port of the popular
+# GTK theme Arc for Plasma Desktop"). Deliberately minimal: kde-plasma-desktop
+# (not full kde-standard) to keep the telemetry surface small; the extras
+# below are the file manager, terminal, Arc Qt/KDE theme, and Papirus icons.
+# Background sync/telemetry daemons are neutralized in install-kde-edition.sh.
+kde-plasma-desktop
+dolphin
+konsole
+arc-theme
+arc-kde
+papirus-icon-theme

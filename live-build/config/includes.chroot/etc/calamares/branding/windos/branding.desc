@@ -1,0 +1,44 @@
+---
+# windOS Zen — Calamares branding (Module 4)
+# Schema matches Trixie's Calamares (sidebar:/navigation: are scalars,
+# window sizing via windowSize — the old map form crashes yaml-cpp).
+componentName: windos
+
+welcomeStyleCalamares: false
+welcomeExpandingLogo: true
+
+windowExpanding: normal
+windowSize: 1000px,640px
+windowPlacement: center
+
+sidebar: widget
+navigation: widget
+
+strings:
+    productName:         windOS Zen
+    shortProductName:    windOS Zen
+    version:             1.0
+    shortVersion:        1.0
+    versionedName:       windOS Zen 1.0 "Breeze"
+    shortVersionedName:  windOS Zen 1.0
+    bootloaderEntryName: windOS-Zen
+    productUrl:          https://windos.nn1kk00.ru/
+    supportUrl:          https://windos.nn1kk00.ru/#team
+    knownIssuesUrl:      https://windos.nn1kk00.ru/#graveyard
+    releaseNotesUrl:     https://windos.nn1kk00.ru/#zen
+
+images:
+    productIcon:         windos-cloud.png
+    productLogo:         windos-logo.png
+    productWallpaper:    windos-wallpaper.png
+    productWelcome:      windos-banner.png
+
+style:
+   SidebarBackground:        "#090d16"
+   SidebarText:              "#94a3b8"
+   SidebarTextCurrent:       "#38bdf8"
+   SidebarBackgroundCurrent: "#121826"
+
+# no slideshow on purpose: the installer must stay responsive on a
+# single-core Celeron. Information beats animation.
+slideshow:               ""

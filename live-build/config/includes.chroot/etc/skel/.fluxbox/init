@@ -1,0 +1,85 @@
+# ===========================================================================
+#  windOS Zen — fluxbox resource file (init)
+#  Only the deltas from stock fluxbox; everything else inherits defaults so
+#  upgrades never fight us.
+# ===========================================================================
+
+session.styleFile:			~/.fluxbox/styles/windos-zen/theme.cfg
+
+session.screen0.toolbar.visible:	true
+session.screen0.toolbar.placement:	BottomLeft
+session.screen0.toolbar.height:		30
+session.screen0.toolbar.widthPercent:	100
+session.screen0.toolbar.tools:	workspacename, systemtray, iconbar, clock
+session.screen0.toolbar.autoHide:	false
+session.screen0.toolbar.layer:	Dock
+
+session.screen0.windowmenu:		~/.fluxbox/windowmenu
+session.screen0.menu:			~/.fluxbox/menu
+session.screen0.rootCommand:		nitrogen --restore
+
+session.screen0.workspaces:		2
+session.screen0.workspaceNames:		breeze,gust
+session.screen0.workspacewarping:	true
+session.screen0.showwindowposition:	true
+session.screen0.showposinsidewindow:	true
+session.screen0.edgeSnapThreshold:	8
+session.screen0.windowPlacement:	RowSmartPlacement
+session.screen0.focusModel:		ClickToFocus
+session.screen0.autoRaise:		false
+session.screen0.clickRaises:		true
+session.screen0.decorateTransient:	true
+session.screen0.resizeMode:		Bottom
+session.screen0.followModel:		Ignore
+session.screen0.userFollowModel:	Follow
+session.screen0.noFocusWhileTypingDelay: 1000
+session.screen0.workspaces:		2
+session.screen0.tab.width:		64
+session.screen0.tabs.usePixmap:		true
+session.screen0.maxDisableResize:	false
+session.screen0.maxDisableMove:		false
+session.screen0.maxIgnoreIncrement:	true
+session.screen0.opaqueMove:		true
+session.screen0.fullMaximization:	true
+session.screen0.iconbar.mode:		{static groups} (workspace)
+session.screen0.iconbar.alignment:	Left
+session.screen0.iconbar.iconWidth:	96
+session.screen0.iconbar.useIcons:	false
+session.screen0.slit.placement:		RightBottom
+session.screen0.slit.autoHide:		true
+session.screen0.slit.layer:		Dock
+session.screen0.slit.onhead:		1
+session.screen0.slit.accepting:		true
+session.screen0.allowRemoteActions:	false
+session.screen0.clientMenu.usePixmap:	true
+session.screen0.defaultDeco:		NORMAL
+session.screen0.focusLastWindow:	true
+session.screen0.focusModel:		ClickToFocus
+session.screen0.focusNewWindows:	true
+session.screen0.imageDither:		false
+session.screen0.windowScrollAction:	
+session.screen0.windowScrollReverse:	false
+session.screen0.strftime:		%a %d %b  %H:%M
+
+session.appsFile:			~/.fluxbox/apps
+session.groupFile:			~/.fluxbox/groups
+session.keyFile:			~/.fluxbox/keys
+session.menuFile:			~/.fluxbox/menu
+session.slitlistFile:			~/.fluxbox/slitlist
+session.tabsAttachArea:		TopLeft
+session.autoRaiseDelay:		250
+session.cacheLife:			5
+session.cacheMax:			200
+session.colorsPerChannel:		4
+session.configVersion:		1.3.7
+session.doubleClickInterval:	250
+session.forcePseudoTransparency:	false
+session.ignoreBorder:		false
+session.imageDither:		false
+session.maxIgnoreIncrement:	true
+session.modKey:			Mod4
+session.numLayers:			13
+session.opacity:			255
+session.tabsAttachArea:		TopLeft
+session.tabPadding:			0
+session.useMod1:			true

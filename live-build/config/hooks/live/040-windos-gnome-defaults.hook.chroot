@@ -1,0 +1,71 @@
+#!/bin/sh
+# ============================================================================
+#  windOS Zen — chroot hook 040: GNOME as the default live session (Module 5)
+#  gdm3 autologin + windOS dconf profile (dark Arc, cyan accent, dock).
+# ============================================================================
+set -e
+
+# --- gdm3: autologin the live user ---------------------------------------------
+mkdir -p /etc/gdm3
+GDM=/etc/gdm3/custom.conf
+if [ -f "$GDM" ]; then
+    # uncomment/complete the [daemon] autologin keys if present
+    sed -i \
+        -e 's/^#\(AutomaticLoginEnable=\).*/\1True/' \
+        -e 's/^\(AutomaticLoginEnable=\).*/\1True/' \
+        -e 's/^#\(AutomaticLogin=\).*/\1user/' \
+        -e 's/^\(AutomaticLogin=\).*/\1user/' \
+        "$GDM"
+    grep -q '^AutomaticLoginEnable=' "$GDM" || echo 'AutomaticLoginEnable=True' >> "$GDM"
+    grep -q '^AutomaticLogin='        "$GDM" || echo 'AutomaticLogin=user'        >> "$GDM"
+else
+    cat > "$GDM" <<'EOF'
+[daemon]
+AutomaticLoginEnable=True
+AutomaticLogin=user
+EOF
+fi
+
+# --- windOS dconf profile as system default ------------------------------------
+# /etc/dconf/db/local.d/* is NEVER read unless /etc/dconf/profile/user names
+# `system-db:local` (no Debian package ships that file — not dconf-cli,
+# libdconf1, nor gdm3 — so we must create it; without it the session keeps
+# stock GNOME defaults). Then compile with dconf update (unmasked: a failure
+# here must break the build, not boot stock GNOME silently).
+mkdir -p /etc/dconf/profile /etc/dconf/db/local.d
+cat > /etc/dconf/profile/user <<'EOF'
+user-db:user
+system-db:local
+system-db:ibus
+EOF
+if [ -f /usr/share/windos/windos-gnome.dconf ]; then
+    cp /usr/share/windos/windos-gnome.dconf /etc/dconf/db/local.d/00-windos
+    dconf update
+fi
+
+# --- windOS brand fonts (Plus Jakarta Sans has no Debian package) --------------
+# TTFs ship in /usr/share/fonts/truetype/windos via includes.chroot;
+# rebuild the font cache so the dconf font-name resolves instead of
+# silently falling back to Cantarell.
+if [ -d /usr/share/fonts/truetype/windos ]; then
+    fc-cache -f /usr/share/fonts/truetype/windos
+fi
+
+# --- GTK defaults for every new user --------------------------------------------
+mkdir -p /etc/skel/.config/gtk-3.0 /etc/skel/.config/gtk-4.0
+cat > /etc/skel/.config/gtk-3.0/settings.ini <<'EOF'
+[Settings]
+gtk-theme-name=Arc-Dark
+gtk-icon-theme-name=Papirus-Dark
+gtk-font-name=Plus Jakarta Sans 10
+gtk-application-prefer-dark-theme=1
+gtk-cursor-theme-name=Adwaita
+EOF
+cp /etc/skel/.config/gtk-3.0/settings.ini /etc/skel/.config/gtk-4.0/settings.ini
+
+# --- background for gdm + live session -------------------------------------------
+mkdir -p /etc/skel/.local/share/backgrounds
+cp /usr/share/wallpapers/windos-zen-1920x1080.png \
+   /etc/skel/.local/share/backgrounds/ 2>/dev/null || true
+
+exit 0

@@ -1,0 +1,17 @@
+#!/bin/sh
+# windOS Zen — binary stage hook: ensure plymouth is in the live initramfs
+# Runs after live-build builds the initramfs
+THEME_DIR="live/vmlinuz"
+# Find the initrd in the binary dir
+INITRD=$(ls live/initrd* 2>/dev/null | head -1)
+if [ -z "$INITRD" ]; then
+    echo "windos: no initrd found in binary stage, skipping plymouth injection"
+    exit 0
+fi
+# Check if plymouth is already in the initrd
+if lsinitramfs "$INITRD" 2>/dev/null | grep -q "plymouth/themes/windos-zen"; then
+    echo "windos: plymouth theme already in initrd"
+    exit 0
+fi
+echo "windos: plymouth theme not in initrd - will be handled by initramfs-tools hook"
+exit 0

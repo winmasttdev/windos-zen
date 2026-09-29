@@ -1,0 +1,63 @@
+# ===========================================================================
+#  windOS Zen — fluxbox keybindings
+#  Mod4 (Super) is the windOS key. Everything reachable in <= 2 keystrokes.
+# ===========================================================================
+
+Mod4 Return :Exec alacritty
+Mod4 t :Exec alacritty
+Mod4 d :Exec rofi -show drun -show-icons
+Mod4 r :Exec rofi -show run
+Mod4 w :Exec firefox-esr
+Mod4 e :Exec pcmanfm
+Mod4 p :Exec mousepad
+Mod4 n :Exec nitrogen
+Mod4 c :Exec galculator
+Mod4 h :Exec htop
+
+Control Escape :RootMenu
+Mod4 Space :RootMenu
+
+# window management
+Mod4 q :Close
+Mod4 x :Kill
+Mod4 f :Fullscreen
+Mod4 m :Maximize
+Mod4 Shift m :MaximizeVertical
+Mod4 b :Shade
+Mod4 i :Iconify
+Mod4 Tab :NextWindow (workspace=[current])
+Mod4 Shift Tab :PrevWindow (workspace=[current])
+Mod4 s :ToggleDecor
+Mod4 u :SendToWorkspace 1
+Mod4 Shift u :SendToWorkspace 2
+
+# workspaces
+Mod4 1 :Workspace 1
+Mod4 2 :Workspace 2
+Mod4 F1 :SendToWorkspace 1
+Mod4 F2 :SendToWorkspace 2
+
+# desktop
+Mod4 F11 :ShowDesktop
+Mod4 l :Exec xscreensaver-command -lock
+
+# media keys
+XF86AudioRaiseVolume :Exec amixer -q sset Master 5%+ unmute
+XF86AudioLowerVolume :Exec amixer -q sset Master 5%- unmute
+XF86AudioMute :Exec amixer -q sset Master toggle
+XF86AudioPlay :Exec playerctl play-pause
+XF86AudioNext :Exec playerctl next
+XF86AudioPrev :Exec playerctl previous
+XF86MonBrightnessUp :Exec brightnessctl set +10%
+XF86MonBrightnessDown :Exec brightnessctl set 10%-
+
+# screenshots (scrot, lands in ~/pics)
+Print :Exec sh -c 'mkdir -p ~/pics && scrot ~/pics/windos-%Y%m%d-%H%M%S.png'
+Shift Print :Exec sh -c 'mkdir -p ~/pics && scrot -s ~/pics/windos-sel-%Y%m%d-%H%M%S.png'
+
+# the windOS key combo: launch the installer (because why not)
+Mod4 Shift i :Exec windos-install
+
+# reload configs without leaving the session
+Mod4 Shift r :Restart
+Control Mod4 r :Reconfigure

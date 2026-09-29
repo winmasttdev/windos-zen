@@ -1,0 +1,13 @@
+# ============================================================================
+#  windOS Zen — 20-zen-extras.list.chroot
+#  Small daemons that keep old silicon calm. All of these are <= 2 MB RSS.
+# ============================================================================
+
+# OOM prevention with a gentle hand (kills the greediest task before thrash)
+earlyoom
+
+# CPU frequency userspace tools (powersave on battery, ondemand on AC)
+linux-cpupower
+
+# entropy for legacy boxes without RDRAND (1 GB RAM VMs included)
+haveged

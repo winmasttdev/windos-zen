@@ -1,0 +1,45 @@
+# ============================================================================
+#  windOS Zen — 00-minimal.list.chroot
+#  The floor: X.org/Wayland + gdm3 + installer + plumbing.
+#  Idle budget for the whole LiveCD session: < 180 MB RSS.
+# ============================================================================
+
+# --- display server / input / GL -------------------------------------------
+xorg
+xserver-xorg-core
+xserver-xorg-input-all
+xserver-xorg-video-all
+mesa-utils
+
+# --- session & greeter ------------------------------------------------------
+gdm3
+
+# --- system plumbing --------------------------------------------------------
+systemd-sysv
+udev
+initramfs-tools
+dbus-x11
+polkitd
+gnome-keyring
+console-setup
+keyboard-configuration
+locales
+tzdata
+sudo
+ca-certificates
+
+# --- boot splash (Module 2) --------------------------------------------------
+plymouth
+plymouth-themes
+
+# --- installer (Module 4) ----------------------------------------------------
+calamares
+
+# --- networking / sound / power ----------------------------------------------
+network-manager
+network-manager-gnome
+alsa-utils
+volumeicon-alsa
+
+# --- firmware that is redistributable (non-free pulled by --firmware-binary) --
+firmware-linux-free

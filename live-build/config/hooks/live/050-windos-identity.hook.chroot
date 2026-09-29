@@ -1,0 +1,71 @@
+#!/bin/sh
+# ============================================================================
+#  windOS Zen — chroot hook 050: OS identity (Module 1)
+#  Makes the live system (and installs from it) say "windOS Zen" everywhere
+#  a human looks, while keeping apt/dpkg machinery on Debian rails:
+#    ID=debian and ID_LIKE=debian are NEVER changed — apt, dpkg-vendor,
+#    debootstrap scripts and third-party repos key off those.
+#  Only human-visible strings (NAME, PRETTY_NAME, ...) are rebranded.
+#  Runs inside the live chroot during lb build. No systemd running here,
+#  so everything is plain file writes (no hostnamectl).
+# ============================================================================
+set -e
+
+# --- /etc/os-release ---------------------------------------------------------
+# /etc/os-release is owned by base-files. A plain overwrite would be
+# reverted (or fight via .dpkg-dist / conffile prompts) on the next
+# base-files upgrade, so divert it: our file wins, the Debian original
+# is preserved at /etc/os-release.debian for any tool that needs it.
+if [ -f /etc/os-release ] && [ -z "$(dpkg-divert --list /etc/os-release 2>/dev/null)" ]; then
+    dpkg-divert --add --rename --divert /etc/os-release.debian /etc/os-release
+fi
+cat > /etc/os-release <<'EOF'
+NAME="windOS Zen"
+PRETTY_NAME="windOS Zen 1.0 Breeze (Debian 13 Trixie)"
+VERSION="1.0"
+VERSION_ID="1.0"
+VERSION_CODENAME=breeze
+ID=debian
+ID_LIKE=debian
+HOME_URL="https://windos.nn1kk00.ru/"
+SUPPORT_URL="https://windos.nn1kk00.ru/"
+BUG_REPORT_URL="https://windos.nn1kk00.ru/"
+EOF
+
+# --- /etc/lsb-release (read by lsb_release, neofetch-style tools) -------------
+cat > /etc/lsb-release <<'EOF'
+DISTRIB_ID="windOS Zen"
+DISTRIB_RELEASE=1.0
+DISTRIB_CODENAME=breeze
+DISTRIB_DESCRIPTION="windOS Zen 1.0 Breeze"
+EOF
+
+# --- login banners -----------------------------------------------------------
+cat > /etc/issue <<'EOF'
+windOS Zen 1.0 Breeze (Debian 13 Trixie) \n \l
+
+EOF
+cp /etc/issue /etc/issue.net
+
+# --- hostname ----------------------------------------------------------------
+# live-config's 0020-hostname only overwrites /etc/hostname when it is
+# missing or contains localhost.localdomain, so this value survives boot.
+# Belt and braces: auto/config also passes hostname=windos-zen on the
+# live kernel cmdline (--bootappend-live).
+echo "windos-zen" > /etc/hostname
+if grep -q '^127\.0\.1\.1' /etc/hosts 2>/dev/null; then
+    sed -i 's/^\(127\.0\.1\.1\s\+\).*/\1windos-zen/' /etc/hosts
+else
+    echo "127.0.1.1	windos-zen" >> /etc/hosts
+fi
+
+# --- pretty hostname (no systemd in hook: write machine-info directly) -------
+mkdir -p /etc
+cat > /etc/machine-info <<'EOF'
+PRETTY_HOSTNAME="windOS Zen Live"
+EOF
+
+# NOTE: deliberately untouched — user@host shell mechanics stay Debian:
+# live username remains `user`, no PS1/prompt rebranding here.
+
+exit 0

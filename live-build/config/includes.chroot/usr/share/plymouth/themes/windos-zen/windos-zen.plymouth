@@ -1,0 +1,8 @@
+[Plymouth Theme]
+Name=windOS Zen
+Description=Minimalist cloud splash for windOS Zen — pre-rendered blits only, tuned for legacy GPUs. White-on-dark lockup, 24-frame spinner, quantised progress bar.
+ModuleName=script
+
+[script]
+ImageDir=/usr/share/plymouth/themes/windos-zen
+ScriptFile=/usr/share/plymouth/themes/windos-zen/windos-zen.script

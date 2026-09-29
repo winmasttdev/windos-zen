@@ -1,0 +1,91 @@
+#!/bin/sh
+# ============================================================================
+#  windOS Zen — chroot hook 030: Calamares branding + live-desktop launcher
+#  (Module 4). Config trees arrive via includes.chroot/etc/calamares/.
+# ============================================================================
+set -e
+
+# --- point calamares at OUR settings, not calamares-settings-debian's --------
+# (package ships /usr/share/calamares as fallback; /etc/calamares wins)
+[ -f /etc/calamares/settings.conf ] || { echo "windos calamares settings missing" >&2; exit 1; }
+
+# --- desktop launcher with windOS branding -----------------------------------
+mkdir -p /usr/share/applications
+cat > /usr/share/applications/windos-installer.desktop <<'EOF'
+[Desktop Entry]
+Type=Application
+Version=1.0
+Name=Install windOS Zen
+Name[ru]=Установить windOS Zen
+GenericName=System Installer
+Comment=Put windOS Zen on this machine — lighter than air
+Exec=/usr/bin/windos-install
+Icon=windos
+Terminal=false
+Categories=System;
+StartupNotify=true
+EOF
+
+# small wrapper so the launcher gets polkit + no bogus theme env.
+# NOTE: qt5ct/qt6ct are NOT installed in the live image, so we must NOT
+# export QT_QPA_PLATFORM_THEME (a dangling theme name breaks Qt startup).
+# Calamares needs root for partition/mount jobs: escalate via pkexec
+# (the stock calamares.desktop does the same); our polkit rule below lets
+# the live user through without a password prompt.
+cat > /usr/bin/windos-install <<'EOF'
+#!/bin/sh
+# windOS Zen installer launcher
+unset QT_QPA_PLATFORM_THEME
+if [ "$(id -u)" -ne 0 ] && command -v pkexec >/dev/null 2>&1; then
+    exec pkexec calamares "$@"
+fi
+exec calamares "$@"
+EOF
+chmod 0755 /usr/bin/windos-install
+
+# --- hide the stock Calamares launcher (we have our own) ---------------------
+for f in /usr/share/applications/calamares*.desktop; do
+    [ -e "$f" ] || continue
+    mv "$f" "${f%.desktop}.disabled" 2>/dev/null || true
+done
+# also hide it from the GNOME app grid
+if command -v gio >/dev/null 2>&1; then
+    for f in /usr/share/applications/calamares*.desktop; do
+        [ -e "$f" ] || continue
+        mv "$f" "${f%.desktop}.disabled" 2>/dev/null || true
+    done
+fi
+
+# --- let the live user run the installer without a password ------------------
+# NOTE: live-build's default live username is `user` (auto/config sets no
+# --username override), so the rule below matches. Syntax is the polkit
+# .rules JS form used by Trixie's polkit (>= 105).
+mkdir -p /etc/polkit-1/rules.d
+cat > /etc/polkit-1/rules.d/49-windos-calamares.rules <<'EOF'
+// windOS Zen live session: calamares runs admin jobs without prompting
+polkit.addRule(function(action, subject) {
+    if (subject.user == "user" &&
+        action.id.indexOf("com.github.calamares.calamares") === 0) {
+        return polkit.Result.YES;
+    }
+});
+EOF
+# enforce ownership/perms: polkitd must be able to read these as any user
+chown root:root /etc/polkit-1/rules.d /etc/polkit-1/rules.d/49-windos-calamares.rules
+chmod 0755 /etc/polkit-1/rules.d
+chmod 0644 /etc/polkit-1/rules.d/49-windos-calamares.rules
+
+# --- hicolor icon so the launcher shows the cloud ---------------------------
+if [ -d /usr/share/icons/hicolor ]; then
+    for d in /usr/share/windos/icons/*x*; do
+        s=$(basename "$d")
+        mkdir -p "/usr/share/icons/hicolor/$s/apps"
+        cp "$d/windos.png" "/usr/share/icons/hicolor/$s/apps/windos.png"
+    done
+    mkdir -p /usr/share/icons/hicolor/scalable/apps
+    cp /usr/share/windos/icons/scalable/windos.svg \
+       /usr/share/icons/hicolor/scalable/apps/windos.svg 2>/dev/null || true
+    gtk-update-icon-cache -q /usr/share/icons/hicolor 2>/dev/null || true
+fi
+
+exit 0

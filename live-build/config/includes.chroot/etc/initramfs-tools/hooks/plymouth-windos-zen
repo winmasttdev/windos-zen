@@ -1,0 +1,17 @@
+#!/bin/sh
+# windOS Zen — initramfs-tools hook: belt-and-braces copy of our theme.
+# The stock /usr/share/initramfs-tools/hooks/plymouth hook already installs
+# the ACTIVE theme (read via plymouth-set-default-theme, i.e. the
+# default.plymouth alternative our 020 chroot hook sets) plus script.so, but
+# re-copy here so the theme files are present regardless of hook ordering.
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case $1 in prereqs) prereqs; exit 0;; esac
+. /usr/share/initramfs-tools/hook-functions
+SRC=/usr/share/plymouth/themes/windos-zen
+if [ -f "$SRC/windos-zen.plymouth" ]; then
+    mkdir -p "$DESTDIR/usr/share/plymouth/themes"
+    cp -a "$SRC" "$DESTDIR/usr/share/plymouth/themes/"
+fi
+# NOTE: no update-alternatives calls here — initramfs hooks must not touch
+# the real root's alternative database; the 020 chroot hook owns that.

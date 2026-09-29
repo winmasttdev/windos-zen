@@ -1,0 +1,11 @@
+# windOS Zen — GNOME edition package list (Debian 13 Trixie)
+# Installed when the user picks "windOS Modern GNOME" in Calamares.
+gnome-core
+gnome-shell-extension-dash-to-dock
+gnome-shell-extension-blur-my-shell
+gnome-shell-extension-appindicator
+gnome-shell-extension-user-theme
+gnome-tweaks
+arc-theme
+papirus-icon-theme
+fonts-cantarell

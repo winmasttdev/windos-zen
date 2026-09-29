@@ -1,0 +1,38 @@
+#!/bin/sh
+# ===========================================================================
+#  windOS Zen — fluxbox startup (runs once per session, before the WM loop)
+#  Every daemon here was weighed: total session budget < 180 MB RSS.
+# ===========================================================================
+
+# compositor first so windows appear already-rounded (picom ~6 MB RSS)
+if command -v picom >/dev/null 2>&1; then
+    picom -b --config "$HOME/.config/picom/picom.conf" &
+fi
+
+# wallpaper (nitrogen --restore is a config read, no daemon stays resident)
+if command -v nitrogen >/dev/null 2>&1; then
+    nitrogen --restore &
+fi
+
+# tray: volume + network (nm-applet ~14 MB, volumeicon ~5 MB)
+if command -v volumeicon >/dev/null 2>&1; then volumeicon & fi
+if command -v nm-applet  >/dev/null 2>&1; then nm-applet & fi
+
+# conky: the only eyecandy we allow ourselves (~3 MB, 1 s interval)
+if command -v conky >/dev/null 2>&1 && [ -f "$HOME/.config/conky/windos.conf" ]; then
+    sleep 2 && conky -c "$HOME/.config/conky/windos.conf" &
+fi
+
+# screen locking for when you walk away from the potato
+if command -v xscreensaver >/dev/null 2>&1; then
+    xscreensaver -no-splash &
+fi
+
+# polkit agent for GUI privilege prompts
+if command -v /usr/libexec/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+    /usr/libexec/polkit-gnome-authentication-agent-1 &
+elif command -v /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 >/dev/null 2>&1; then
+    /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 &
+fi
+
+exit 0

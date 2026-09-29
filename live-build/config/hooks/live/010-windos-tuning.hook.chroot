@@ -1,0 +1,49 @@
+#!/bin/sh
+# ============================================================================
+#  windOS Zen — chroot hook 010: performance & memory tuning (Module 6)
+#  Runs inside the live chroot during lb build.
+# ============================================================================
+set -e
+
+# --- zram swap (zstd), our own unit so we don't depend on systemd-zram-generator
+systemctl enable windos-zram.service || true
+
+# --- earlyoom: prefer killing chrome over OOM-panicking the kernel
+if [ -f /etc/default/earlyoom ]; then
+    cat > /etc/default/earlyoom <<'EOF'
+# windOS Zen: trip at 5% free memory / 2% free swap, prefer giant processes
+EARLYOOM_ARGS="-r 3600 -m 5 -s 2 --prefer '(chrome|firefox|chromium)"'
+EOF
+fi
+systemctl enable earlyoom.service || true
+
+# --- daemons a lightweight distro has no business shipping awake -------------
+for svc in \
+    avahi-daemon.service avahi-daemon.socket \
+    bluetooth.service \
+    cups.service cups.socket cups-browsed.service \
+    ModemManager.service \
+    wpa_supplicant.service \
+    smartmontools.service \
+    ; do
+    systemctl disable "$svc" 2>/dev/null || true
+    systemctl mask    "$svc" 2>/dev/null || true
+done
+# NetworkManager owns wifi; wpa_supplicant is pulled in by NM on demand, so
+# unmask it again — NM sockets-activates it.
+systemctl unmask wpa_supplicant.service 2>/dev/null || true
+
+# --- journald: 32 MB cap, no persistent spill on the live session ------------
+mkdir -p /etc/systemd/journald.conf.d
+cat > /etc/systemd/journald.conf.d/99-windos.conf <<'EOF'
+[Journal]
+SystemMaxUse=32M
+RuntimeMaxUse=16M
+MaxLevelStore=warning
+EOF
+
+# --- getty: one VT is plenty on the live medium ------------------------------
+systemctl disable getty@tty2.service getty@tty3.service getty@tty4.service \
+                   getty@tty5.service getty@tty6.service 2>/dev/null || true
+
+exit 0

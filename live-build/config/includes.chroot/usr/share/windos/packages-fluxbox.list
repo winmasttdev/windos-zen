@@ -1,0 +1,36 @@
+# windOS Zen — Fluxbox edition package list (Debian 13 "Trixie")
+# Consumed by modules/03-fluxbox/install-fluxbox-edition.sh (apt-get install).
+# One package name per line; "#" starts a comment. All names verified against
+# Trixie: conky ships as conky-std, neofetch is GONE (use fastfetch),
+# the volumeicon binary ships as volumeicon-alsa, nm-applet ships as
+# network-manager-gnome.
+
+# --- session core (the edition spec) ---
+fluxbox
+picom
+nitrogen
+feh
+rofi
+alacritty
+pcmanfm
+conky-std
+arc-theme
+papirus-icon-theme
+
+# --- apps referenced by skel menu / keys / startup ---
+firefox-esr
+mousepad
+viewnior
+galculator
+gparted
+lxappearance
+volumeicon-alsa
+network-manager-gnome
+policykit-1-gnome
+xscreensaver
+htop
+scrot
+alsa-utils
+playerctl
+brightnessctl
+fastfetch

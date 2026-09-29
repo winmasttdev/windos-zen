@@ -1,0 +1,53 @@
+# ============================================================================
+#  windOS Zen — 10-gnome.list.chroot
+#  Default LiveCD edition: GNOME (Modern Glassmorphic).
+#  Target: full GNOME Shell with windOS dconf profile + extensions.
+# ============================================================================
+
+# --- shell / session ----------------------------------------------------------
+gnome-core
+gdm3
+dconf-cli
+
+# --- extensions (wired in modules/05-gnome/windos-gnome.dconf) ----------------
+# NOTE: Debian name is dashtodock (no hyphens); -dash-to-dock does not exist.
+gnome-shell-extension-dashtodock
+gnome-shell-extension-blur-my-shell
+gnome-shell-extension-appindicator
+gnome-shell-extensions
+
+# --- tweaks / theming ----------------------------------------------------------
+gnome-tweaks
+arc-theme
+papirus-icon-theme
+
+# --- launcher / terminal / files ------------------------------------------------
+gnome-terminal
+nautilus
+rofi
+
+# --- desktop furniture ----------------------------------------------------------
+evince
+gnome-system-monitor
+gparted
+conky-std
+
+# --- sysadmin kit -----------------------------------------------------------------
+htop
+fastfetch
+ethtool
+lm-sensors
+unzip
+p7zip-full
+git
+curl
+wget
+gnupg
+
+# --- fonts ---------------------------------------------------------------------
+# Plus Jakarta Sans has no Debian package: staged as TTFs in
+# includes.chroot/usr/share/fonts/truetype/windos (see 040 hook fc-cache).
+fonts-dejavu-core
+fonts-noto-color-emoji
+fonts-jetbrains-mono
+adwaita-icon-theme

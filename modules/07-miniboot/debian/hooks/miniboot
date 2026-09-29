@@ -1,0 +1,54 @@
+#!/bin/sh
+# MiniBoot initramfs-tools hook — Debian port of mkinitcpio hooks/miniswitch.
+#
+# Installed to /etc/miniboot/initramfs-tools/hooks/miniboot and run ONLY for
+# MiniBoot image builds:
+#   mkinitramfs -d /etc/miniboot/initramfs-tools -o /boot/miniboot-switch.img <kver>
+# Stock update-initramfs runs never see it (separate confdir), so normal
+# initrds stay unbothered. Mirrors upstream hooks/miniswitch build():
+#   add_file detect-root.sh, add_binary kexec, add_file miniswitch.sh
+#
+# Storage/filesystem modules do NOT come from here but from the confdir's
+# `modules` file (MODULES=list). rdinit= is a kernel-level parameter, so no
+# init replacement is needed: the kernel execs /windos-preinit.sh directly,
+# bypassing initramfs-tools /init entirely.
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case $1 in prereqs) prereqs; exit 0;; esac
+
+. /usr/share/initramfs-tools/hook-functions
+
+# --- skeleton: rdinit= bypasses initramfs-tools /init, which is what would
+# create these. Upstream mkinitcpio images carry them; without them every
+# mount in preinit/detect-root fails and sysinfo reads empty /proc. ---
+mkdir -p "${DESTDIR}/proc" "${DESTDIR}/sys" "${DESTDIR}/dev" \
+	"${DESTDIR}/dev/pts" "${DESTDIR}/run" "${DESTDIR}/tmp" "${DESTDIR}/mnt"
+
+# --- kexec: the whole reason this initrd exists (libs auto-resolved) ---
+copy_exec /usr/sbin/kexec /sbin/kexec
+mkdir -p "${DESTDIR}/bin"
+ln -sf /sbin/kexec "${DESTDIR}/bin/kexec"
+
+# --- scripts: upstream VERBATIM, preinit ours ---
+copy_file text /usr/lib/miniboot/miniswitch.sh /miniswitch.sh
+copy_file text /usr/lib/miniboot/windos-preinit.sh /windos-preinit.sh
+copy_file text /usr/lib/miniboot/detect-root.sh /detect-root.sh
+chmod 0755 "${DESTDIR}/miniswitch.sh" "${DESTDIR}/windos-preinit.sh" \
+	"${DESTDIR}/detect-root.sh"
+
+# --- bake site defaults (cmdline miniboot.*= knobs still override at boot) ---
+if [ -r /etc/miniboot/miniboot.conf ]; then
+	. /etc/miniboot/miniboot.conf
+	[ -n "${MINIBOOT_ROOT_UUID:-}" ] && \
+		sed -i "s|^ROOT_UUID=.*|ROOT_UUID=\"$MINIBOOT_ROOT_UUID\"|" \
+			"${DESTDIR}/detect-root.sh"
+	[ -n "${MINIBOOT_SUBDIR:-}" ] && \
+		sed -i "s|^SUBDIR=.*|SUBDIR=\"$MINIBOOT_SUBDIR\"|" \
+			"${DESTDIR}/detect-root.sh"
+	[ -n "${MINIBOOT_TIMEOUT:-}" ] && \
+		sed -i "s|^TIMEOUT=.*|TIMEOUT=\"$MINIBOOT_TIMEOUT\"|" \
+			"${DESTDIR}/detect-root.sh"
+	[ -n "${MINIBOOT_DEFAULT:-}" ] && \
+		sed -i "s|^DEFAULT=.*|DEFAULT=\"$MINIBOOT_DEFAULT\"|" \
+			"${DESTDIR}/detect-root.sh"
+fi

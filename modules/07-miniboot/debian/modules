@@ -1,0 +1,27 @@
+# MiniBoot storage set — Debian port of the MODULES=(...) array in
+# miniboot-switch.conf. Debian kernels modularise everything, so this list
+# must cover the boot paths; windos-preinit.sh insmods them (two passes =
+# dependency order without depmod). Dependencies of listed modules are pulled
+# automatically by mkinitramfs.
+# virtio (QEMU/KVM) / NVMe / AHCI-SATA / USB-mass-storage + filesystems.
+virtio_blk
+virtio_pci
+virtio_scsi
+nvme
+nvme-core
+sd_mod
+ahci
+libahci
+libata
+usb-storage
+uas
+ext4
+mbcache
+jbd2
+xfs
+btrfs
+fat
+vfat
+nls_iso8859-1
+nls_utf8
+nls_ascii

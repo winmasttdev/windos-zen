@@ -1,0 +1,10 @@
+# windOS Zen — XFCE edition package list (Debian 13 Trixie)
+# Installed when the user picks "XFCE4 Edition" in Calamares.
+# All names verified present in Trixie. Deliberately minimal:
+# no greybird (brand is Arc-Dark + Papirus), no neofetch / cpufrequtils /
+# bare conky (all absent or renamed in Trixie).
+xfce4
+xfce4-whiskermenu-plugin
+xfce4-terminal
+arc-theme
+papirus-icon-theme

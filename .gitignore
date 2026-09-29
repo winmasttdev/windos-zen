@@ -14,3 +14,15 @@ __pycache__/
 .vscode/
 .idea/
 .DS_Store
+
+# live-build runtime (Debian)
+/live-build/cache/
+/live-build/chroot/
+/live-build/binary/
+/live-build/local/
+/live-build/*.files
+/live-build/*.contents
+/live-build/*.packages
+/live-build/docker-build.log
+/live-build/binary.modified_timestamps
+/live-build/SHA256SUMS

@@ -1,0 +1,45 @@
+[begin] (windOS Zen)
+	[exec] (Terminal) {alacritty}
+	[exec] (Files) {pcmanfm}
+	[exec] (Editor) {mousepad}
+	[exec] (Browser) {firefox-esr}
+	[separator]
+	[submenu] (Applications)
+		[exec] (Terminal — alacritty) {alacritty}
+		[exec] (File Manager — pcmanfm) {pcmanfm}
+		[exec] (Text Editor — mousepad) {mousepad}
+		[exec] (Image Viewer — viewnior) {viewnior}
+		[exec] (Calculator — galculator) {galculator}
+		[exec] (Partition Editor — gparted) {gparted}
+		[separator]
+		[exec] (App Launcher — rofi) {rofi -show drun -show-icons}
+	[end]
+	[submenu] (Settings)
+		[exec] (Appearance — lxappearance) {lxappearance}
+		[exec] (Wallpaper — nitrogen) {nitrogen}
+		[exec] (Compositor — picom.conf) {mousepad ~/.config/picom/picom.conf}
+		[exec] (Fluxbox init) {mousepad ~/.fluxbox/init}
+		[exec] (Keybindings) {mousepad ~/.fluxbox/keys}
+		[exec] (Conky) {mousepad ~/.config/conky/windos.conf}
+		[separator]
+		[exec] (Network — nm-applet) {nm-connection-editor}
+		[exec] (Volume — volumeicon) {volumeicon}
+	[end]
+	[submenu] (windOS)
+		[exec] (Install windOS Zen) {windos-install}
+		[exec] (System info — neofetch) {alacritty -e neofetch}
+		[exec] (Process monitor — htop) {alacritty -e htop}
+		[exec] (The Bloatware Graveyard) {xdg-open https://windos.nn1kk00.ru/#graveyard}
+	[end]
+	[workspaces] (Workspaces)
+	[separator]
+	[config] (Fluxbox config)
+	[reconfigure] (Reconfigure)
+	[restart] (Restart WM)
+	[separator]
+	[exec] (Lock screen) {xscreensaver-command -lock}
+	[exec] (Suspend) {systemctl suspend}
+	[exec] (Reboot) {systemctl reboot}
+	[exec] (Power off) {systemctl poweroff}
+	[exit] (Exit session)
+[end]

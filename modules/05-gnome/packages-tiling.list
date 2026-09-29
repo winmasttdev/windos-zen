@@ -1,0 +1,14 @@
+# windOS Zen — tiling extras package list (Debian 13 Trixie)
+# Helpers i3status (i3/sway bar), swaybg (Wayland wallpaper) and feh
+# (X11 wallpaper for i3/openbox) are required by the skel configs.
+# NOTE: bare 'conky', 'neofetch' and 'cpufrequtils' do NOT exist in
+# Trixie — do not add them here.
+openbox
+i3-wm
+i3status
+sway
+swaybg
+labwc
+foot
+rofi
+feh

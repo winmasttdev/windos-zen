@@ -1,0 +1,13 @@
+#!/bin/sh
+# /etc/kernel/postinst.d/zz-miniboot — Debian port of
+# systemd/95-miniboot.hook (pacman Target=linux PostTransaction).
+# Debian kernel packages invoke this with ($version, $image_path) after every
+# kernel install; it rebuilds the MiniBoot pair for the NEW kernel so the ESP
+# never goes stale. A DPkg::Post-Invoke apt hook would be less precise (no
+# version argument, fires on unrelated upgrades) — postinst.d is the exact
+# equivalent of the pacman hook.
+set -e
+version="$1"
+[ -n "$version" ] || exit 0
+[ -d /etc/miniboot/initramfs-tools ] || exit 0
+exec /usr/sbin/miniboot-refresh.sh "$version"

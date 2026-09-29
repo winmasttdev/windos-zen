@@ -1,0 +1,18 @@
+[Unit]
+Description=windOS Zen zram swap device (zstd)
+Documentation=https://windos.nn1kk00.ru/zen
+DefaultDependencies=no
+Conflicts=umount.target
+Before=basic.target umount.target
+After=systemd-modules-load.service
+ConditionVirtualization=!container
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/lib/windos/zram-setup.sh start
+ExecStop=/usr/local/lib/windos/zram-setup.sh stop
+TimeoutSec=30
+
+[Install]
+WantedBy=multi-user.target swap.target

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  windOS — "Lighter Than Air"
+  Canonical brand mark. Cloud path lifted verbatim from windos.nn1kk00.ru
+  header icon (viewBox 0 0 24 24), re-tiled into a 128x128 canvas so it can be
+  rasterised 1:1 for Plymouth, GRUB, Calamares and the desktop wallpaper.
+
+  Brand tokens
+    bg            #090d16
+    card          rgba(18,24,38,.7)
+    accent-cyan   #38bdf8   (glow rgba(56,189,248,.25))
+    accent-pink   #f43f5e
+    text          #f8fafc
+    text-muted    #94a3b8
+-->
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="windOS cloud">
+  <defs>
+    <!-- stroke gradient: white -> cyan, matching the site's 135deg text gradient -->
+    <linearGradient id="zenStroke" x1="0.12" y1="0" x2="0.88" y2="1">
+      <stop offset="0"    stop-color="#ffffff"/>
+      <stop offset="0.42" stop-color="#bae6fd"/>
+      <stop offset="1"    stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <!-- faint interior fill so the mark reads on light backgrounds too -->
+    <linearGradient id="zenFill" x1="0.5" y1="0" x2="0.5" y2="1">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0.02"/>
+    </linearGradient>
+
+    <!-- NOTE: filter region must be huge — this group is drawn inside a scale(5)
+         transform, so stdDeviation is in *pre-scale* units (2.5 * 5 = 12.5px blur). -->
+    <filter id="zenGlow" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2.5" result="b1"/>
+      <feFlood flood-color="#38bdf8" flood-opacity="0.75"/>
+      <feComposite in2="b1" operator="in" result="glow"/>
+      <feMerge>
+        <feMergeNode in="glow"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- 24-unit cloud path translated by 4 and scaled 5x -> occupies x 9..119, y 9..99 -->
+  <g transform="translate(4 4) scale(5)" filter="url(#zenGlow)">
+    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"
+          fill="url(#zenFill)"
+          stroke="url(#zenStroke)"
+          stroke-width="2"
+          stroke-linejoin="round"
+          stroke-linecap="round"/>
+  </g>
+</svg>
