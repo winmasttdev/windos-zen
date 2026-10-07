@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- windOS Zen — EDITORIAL wallpaper master, "Merodian" gallery language
+     (single scalable master for every resolution).
+     Warm black #0e0d0b, cream hairline grid, single cyan aura, small
+     canonical mark — plus restrained catalogue typography, bottom-left
+     plaque + top-right edition tag (never centered-shouty).
+
+     SCALING: viewBox is 1920x1080 with preserveAspectRatio="xMidYMid slice",
+     so rsvg-convert -w W -h H crops instead of squashing on off-aspect
+     targets (4:3 keeps full height, trims the sides). All text lives inside
+     the 4:3-safe column (x 260..1660): the side margins ARE the crop guides,
+     so one master serves 1024x768, 1366x768, 1920x1080 and 2560x1440.
+
+     TYPE: SVG <text> renders reliably in this pipeline (rsvg-convert 2.62 /
+     pango + fontconfig; no per-resolution overlays needed):
+       - wordmark: Fraunces italic (bundled in assets/brand/fonts/).
+       - micro-labels: Manrope first (site token); not vendored, so the
+         builder falls back to Plus Jakarta Sans (bundled) or a system
+         grotesque (Inter / DejaVu Sans). All neutral grotesques — the
+         letterspaced-small-caps voice survives either way.
+     gen-assets.sh exposes assets/brand/fonts to fontconfig at render time;
+     zero webfont downloads, builder-proof.
+
+     Render:  rsvg-convert -w 1920 -h 1080 wallpaper-editorial.svg
+              wallpaper-editorial-1920x1080.png   (likewise 1024x768,
+              1366x768, 2560x1440 — see tools/gen-assets.sh [3/7]). -->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1920" height="1080" viewBox="0 0 1920 1080"
+     preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <!-- editorial warm-black ramp (site bg #0e0d0b, card #161411) -->
+    <linearGradient id="esky" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0"    stop-color="#171410"/>
+      <stop offset="0.55" stop-color="#0e0d0b"/>
+      <stop offset="1"    stop-color="#080706"/>
+    </linearGradient>
+
+    <radialGradient id="ecyan" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0.16"/>
+      <stop offset="0.6" stop-color="#38bdf8" stop-opacity="0.05"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="ehorizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#38bdf8" stop-opacity="0.22"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- cream hairline grid (site hairline token is cream ink at 0.12;
+         full-bleed grid runs fainter so the mark stays the focal point) -->
+    <pattern id="egrid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#ece5d8" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+
+    <radialGradient id="evignette" cx="0.5" cy="0.45" r="0.78">
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0.5"/>
+    </radialGradient>
+
+    <!-- region oversized on purpose: the mark group carries scale(4), so
+         stdDeviation is pre-scale (0.9 * 4 = ~3.6px on-canvas halo). -->
+    <filter id="esoft" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.9" result="b"/>
+      <feFlood flood-color="#38bdf8" flood-opacity="0.32"/>
+      <feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+
+    <linearGradient id="emark" x1="0.12" y1="0" x2="0.88" y2="1">
+      <stop offset="0"    stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#bae6fd"/>
+      <stop offset="1"    stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <!-- the canonical windOS mark, 24u box (byte-identical to windos-cloud.svg) -->
+    <g id="emark24">
+      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"
+            fill="none" stroke="url(#emark)" stroke-width="2.2"
+            stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#esky)"/>
+  <rect width="1920" height="1080" fill="url(#egrid)"/>
+
+  <!-- one soft cyan aura, top-centre — same trick as the website's .glow-orb -->
+  <ellipse cx="960" cy="-60" rx="720" ry="480" fill="url(#ecyan)"/>
+
+  <!-- small centred mark (editorial restraint: presence, not monument) -->
+  <g transform="translate(960 470) scale(4) translate(-12 -12)" filter="url(#esoft)">
+    <use href="#emark24"/>
+  </g>
+
+  <!-- single hairline rule under the mark, gallery-plaque style -->
+  <rect x="896" y="640" width="128" height="1" fill="#ece5d8" opacity="0.18"/>
+
+  <!-- catalogue typography: cream at low opacity, off-centre, inside the
+       4:3-safe column (x 260..1660) so the slice crop never touches it -->
+  <text x="1660" y="86" text-anchor="end"
+        font-family="Manrope, 'Plus Jakarta Sans', 'DejaVu Sans', sans-serif"
+        font-weight="500" font-size="13" letter-spacing="4"
+        fill="#ece5d8" fill-opacity="0.35">ZEN — Nº 01</text>
+
+  <rect x="260" y="908" width="44" height="1" fill="#ece5d8" opacity="0.25"/>
+  <text x="260" y="968"
+        font-family="Fraunces, Georgia, serif" font-style="italic" font-weight="400"
+        font-size="46" fill="#ece5d8" fill-opacity="0.85">windOS</text>
+  <text x="262" y="1000"
+        font-family="Manrope, 'Plus Jakarta Sans', 'DejaVu Sans', sans-serif"
+        font-weight="600" font-size="16" letter-spacing="6"
+        fill="#ece5d8" fill-opacity="0.45">LIGHTER THAN AIR</text>
+
+  <rect x="0" y="1046" width="1920" height="2" fill="url(#ehorizon)"/>
+  <rect width="1920" height="1080" fill="url(#evignette)"/>
+</svg>

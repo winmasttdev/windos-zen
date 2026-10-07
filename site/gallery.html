@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>windOS Zen — Brand Gallery</title>
+<link rel="icon" href="favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=JetBrains+Mono:wght@400&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#090d16;--card:rgba(18,24,38,.7);--bd:rgba(255,255,255,.08);--cy:#38bdf8;--tx:#f8fafc;--mut:#94a3b8}
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Plus Jakarta Sans',sans-serif}
+body{background:var(--bg);color:var(--tx);line-height:1.6}
+.wrap{max-width:1100px;margin:0 auto;padding:2rem 1.5rem 4rem}
+h1{font-size:2.2rem;letter-spacing:-1px}h1 span{color:var(--cy)}
+.sub{color:var(--mut);margin:.3rem 0 2rem}
+h2{margin:2.5rem 0 1rem;font-size:1.4rem;border-bottom:1px solid var(--bd);padding-bottom:.4rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:14px;padding:1.2rem;margin:.8rem 0}
+.card h3{font-size:1rem;margin-bottom:.6rem;color:var(--cy)}
+.row{display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end}
+img{max-width:100%;border-radius:8px}.dark{background:#0b1120;padding:1rem}
+.cap{color:var(--mut);font-size:.82rem;margin-top:.4rem}
+pre{font-family:'JetBrains Mono',monospace;font-size:.8rem;background:#05070d;border:1px solid var(--bd);border-radius:10px;padding:1rem;overflow-x:auto;color:#e2e8f0}
+.icons img{image-rendering:auto}
+a{color:var(--cy)}
+</style>
+</head>
+<body><div class="wrap">
+<h1>windOS Zen <span>Brand Gallery</span></h1>
+<p class="sub">Everything the designer made — logos, wallpapers, boot splash, installer art, icons, ASCII. <a href="index.html">← back to site</a></p>
+
+<h2>1 · Canonical logo</h2>
+<div class="card"><h3>windos-logo.svg / windos-cloud.svg (masters)</h3>
+<div class="row dark"><img src="gallery/img/windos-cloud.svg" width="220" alt="cloud"><img src="gallery/img/windos-logo.svg" width="220" alt="logo"></div></div>
+<div class="card"><h3>Renders — 1024 / 256</h3>
+<div class="row dark"><img src="gallery/img/windos-logo-1024.png" width="300"><img src="gallery/img/windos-logo-256.png" width="160"></div></div>
+
+<h2>2 · Wallpapers</h2>
+<div class="card"><h3>1920×1080</h3><img src="gallery/wall/windos-zen-1920x1080.png"></div>
+<div class="card"><h3>1366×768</h3><img src="gallery/wall/windos-zen-1366x768.png"></div>
+
+<div class="card"><h3>Editorial variant (warm black, hairline grid)</h3><img src="gallery/wall/windos-zen-editorial-1920x1080.png"></div>
+
+<h2>3 · Plymouth boot splash</h2>
+<div class="card"><h3>Lockup 512×300</h3><div class="dark"><img src="gallery/plymouth/windos-lockup.png"></div></div>
+<div class="card"><h3>Background 1920×1080</h3><img src="gallery/plymouth/background-1920-1080.png"></div>
+<div class="card"><h3>Spinner frames (00/06/12/18 of 24)</h3><div class="row dark">
+<img src="gallery/plymouth/spinner-00.png" width="64"><img src="gallery/plymouth/spinner-06.png" width="64"><img src="gallery/plymouth/spinner-12.png" width="64"><img src="gallery/plymouth/spinner-18.png" width="64"></div></div>
+
+<h2>4 · Calamares installer art</h2>
+<div class="card"><h3>Banner</h3><img src="gallery/calamares/windos-banner.png"></div>
+<div class="card"><h3>Sidebar</h3><div class="dark"><img src="gallery/calamares/windos-sidebar.png"></div></div>
+
+<h2>5 · Icons (16 → 256 + scalable)</h2>
+<div class="card"><div class="row icons dark">
+<img src="gallery/icons/16/windos.png" width="16"><img src="gallery/icons/24/windos.png" width="24"><img src="gallery/icons/32/windos.png" width="32"><img src="gallery/icons/48/windos.png" width="48"><img src="gallery/icons/64/windos.png" width="64"><img src="gallery/icons/96/windos.png" width="96"><img src="gallery/icons/128/windos.png" width="128"><img src="gallery/icons/256/windos.png" width="128"><img src="gallery/icons/windos.svg" width="128">
+</div><p class="cap">favicon.ico ships in site root (this page's tab icon).</p></div>
+
+<h2>6 · ASCII suite</h2>
+<div class="card"><h3>logo-ascii.txt — narrow / medium / wide + fallbacks</h3><pre>windOS Zen — logo ASCII (generated from assets/generated/icons/256x256/windos.png on #090d16, image-to-ascii)
+Ramp: &#x27; .:-=+*#%@&#x27;. Monospace only, dark terminals.
+
+--- NARROW (24ch) ---
+      .-==-:
+   .+%%#***##*:
+  =@#-      :+%+.
+ -@*          -#***+-
+ *%:              .-**.
+ -@*                .#=
+  =%*:              =*:
+   .=**+===========++:
+      .::-:::::::::.
+
+--- MEDIUM (48ch) ---
+            .-=++***+=-:.
+        .-*%@@@@@@@@@@@@%#+:
+      .+%@@@%#+=-::--=*#%@%%#-
+     =%@%@*-.           :+#%%%*.
+    *@%%%-                 +%#%#:
+   +@%%#.                   -%###****+=-.
+  .%%%%.                     =###########+:
+  -%%%*                        ......:=*#*#+
+  -%%%*                                .=***+
+  .%%%%.                                 +***-
+   =%#%#.                                -*+*=
+    +%###:                               +*+*:
+     -####+-.                          :+++*=
+      .=*###*+=-:::::::::::::::::::::-=*+++-
+         -+*#############**************+=-.
+            .:--===================---:.
+
+--- WIDE (72ch) ---
+                  :=+*#%%%%%%%%##*+-:
+              :=*%@@@@@%%%%%%%%%%%@@%#*=.
+           .=#@@@%%%@@@%%%%%%%%%%%%%%%%%%*-
+         .+%@@%%%@@#*=-:.    ..:-=*#%%%#%%%#=
+        -%@%%%@@#+:                 :+#%%##%%#:
+       *@%%%%@#-                       -#%###%%=
+      *@%%%%%=                           +%####%+
+     *@%%%%%:                             -%######*****+=-:
+    -@%%%%%:                               -%##############*+-.
+    *%%%%%+                                 =#############**##*=.
+   .%%%%%%:                                   ........:-=*##***#*-
+   .%%%%%%.                                               :+#****#=
+   .%%%%%%:                                                 -******-
+    *%%%#%+                                                  -******.
+    -%#%##%:                                                  +*****:
+     +%#####:                                                 +***+*:
+      *%#####=                                               :*++++*.
+       +%####%*:                                            .+++++*=
+        -#%#####*=:                                       .-*++++*=
+         .=####*###*+-:..                             ..-=+*+++++-
+           .-*###***####**************+++++++++++++++++**++++++=:
+              .-+*###**************************++++++++++++++-.
+                  .-==+******************+++++++++++++++=-:.
+</pre></div>
+
+<footer style="margin-top:3rem;color:var(--mut);font-size:.85rem">© 2026 windOS Team · generated from assets/brand via tools/gen-assets.sh</footer>
+</div></body></html>

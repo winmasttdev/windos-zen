@@ -1,0 +1,75 @@
+# ============================================================================
+#  windOS Zen — editorial system-font cutover (phase 2, brand designer)
+#  Delta for: modules/05-gnome/windos-gnome.dconf
+#  Apply from repo root AFTER reverting that file, or forward onto the
+#  pristine tree:  patch -p1 --dry-run < assets/brand/editorial-dconf.patch
+# ============================================================================
+#
+# RATIONALE (keys are GNOME dconf keyfile, installed to
+# /etc/dconf/db/local.d/00-windos by hook 040, compiled with dconf update)
+#
+# * font-name + document-font-name -> 'Manrope 10'.
+#   The approved site speaks Manrope for body/UI. Manrope's open apertures
+#   and even colour hold up at 10pt on dark Arc-Dark chrome; it is the
+#   editorial workhorse, so interface AND documents both move to it.
+# * titlebar-font -> 'Manrope SemiBold 10' (was Plus Jakarta Sans Bold 10).
+#   SemiBold, not Bold: Manrope Bold at 10pt titlebar scale is blunter than
+#   the editorial voice; SemiBold keeps hierarchy without shouting.
+#   Fraunces for window titles was explicitly REJECTED: a high-contrast
+#   display serif (light 300-400 optical cuts) falls apart at 10-11pt UI
+#   sizes on dark backgrounds. Fraunces stays a display face (see below).
+# * monospace-font-name UNCHANGED ('JetBrains Mono 10').
+#   Terminals/editors need a packaged legible mono; JetBrains Mono already
+#   ships via 10-gnome.list.chroot. IBM Plex Mono (the site's mono accent)
+#   has no Trixie package, so switching would add staged-binary weight for
+#   zero legibility gain. Least surprise wins.
+#
+# TRIXIE EVIDENCE (docker debian:trixie, `apt-cache policy`, 2026-09-29):
+#   fonts-manrope ...... AVAILABLE (candidate 4.504+git20201211-4, main)
+#   fonts-fraunces ..... ABSENT (no candidate -> Plan B staging, done below)
+#   fonts-ibm-plex ..... ABSENT (reason mono stays JetBrains)
+#   fonts-jetbrains-mono  AVAILABLE (2.304+ds-5; already in the package list)
+#
+# PLAN B, EXECUTED — Fraunces has no Debian package, so per the Jakarta
+# precedent it is staged as TTFs in this repo:
+#   assets/brand/fonts/Fraunces-Variable.ttf       (OFL, upstream google/fonts)
+#   assets/brand/fonts/Fraunces-Italic-Variable.ttf (OFL, display italic voice)
+# Fraunces is NOT referenced by any dconf key (see titlebar reasoning); it
+# is reserved for display surfaces (lockups, about-pages, future greeter).
+#
+# BUILD-OWNER STEPS (live-build/ is read-only for the brand phase):
+#   1. live-build/config/package-lists/10-gnome.list.chroot, fonts section:
+#      add `fonts-manrope` next to fonts-jetbrains-mono.
+#   2. Ship the staged Fraunces TTFs to
+#      includes.chroot/usr/share/fonts/truetype/windos/ alongside the
+#      Jakarta TTFs. Hook 040 already runs
+#      `fc-cache -f /usr/share/fonts/truetype/windos`, so NO hook change.
+#   3. Hook 040's skel gtk-font-name (`Plus Jakarta Sans 10`) -> `Manrope 10`
+#      to match this dconf (2 spots: gtk-3.0 + gtk-4.0 settings.ini).
+#   4. Out of scope but flagged: Plus Jakarta Sans remains referenced by
+#      modules/03-fluxbox (theme.cfg, conky), modules/04-calamares (*.qss)
+#      and modules/05-gnome/install-xfce-edition.sh — separate per-edition
+#      cutover, not this patch. Jakarta TTFs MUST keep shipping until then.
+#
+--- a/modules/05-gnome/windos-gnome.dconf
++++ b/modules/05-gnome/windos-gnome.dconf
+@@ -5,8 +5,8 @@
+ gtk-theme='Arc-Dark'
+ icon-theme='Papirus-Dark'
+ cursor-theme='Adwaita'
+-font-name='Plus Jakarta Sans 10'
+-document-font-name='Plus Jakarta Sans 10'
++font-name='Manrope 10'
++document-font-name='Manrope 10'
+ monospace-font-name='JetBrains Mono 10'
+ color-scheme='prefer-dark'
+ accent-color='blue'
+@@ -18,7 +18,7 @@
+
+ [/org/gnome/desktop/wm/preferences]
+ theme='Arc-Dark'
+-titlebar-font='Plus Jakarta Sans Bold 10'
++titlebar-font='Manrope SemiBold 10'
+
+ [/org/gnome/shell]
+ enabled-extensions=['dash-to-dock@micxgx.gmail.com', 'blur-my-shell@aunetx', 'appindicatorsupport@rgcjonas.gmail.com', 'user-theme@gnome-shell-extensions.gcampax.github.com']

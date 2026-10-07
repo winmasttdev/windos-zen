@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- windOS Zen — Calamares installer backdrop, NATIVE 1000x640 master.
+     This is NOT a scaled desktop wallpaper: the composition is reframed for
+     the installer window (windowSize 1000px,640px), because Calamares tiles
+     productWallpaper to fill and a 1920x1080 wallpaper shows tiling/scale
+     seams in the ~1000x640 window (build 13, QEMU).
+
+     SEAMLESSNESS CONTRACT: every rim pixel of the render MUST be exactly
+     #090d16 (the QSS chrome base + branding.desc SidebarBackground). All
+     decoration is fully interior (aura/orb/cloud/horizon never touch the
+     canvas edge and fade to 0 opacity before it), and there is intentionally
+     NO full-bleed grid or vignette — those would tint rim pixels and reopen
+     the black-on-deepblue seam. Verified post-render by scanning the full
+     1px border with PIL.
+
+     No <text>: the slideshow banner carries the wordmark; the backdrop stays
+     quiet behind wizard pages (partition tables, user forms need contrast).
+
+     Render:  rsvg-convert -f png -w 1000 -h 640 -o installer-backdrop.png \
+                installer-backdrop.svg
+     (also wired as tools/gen-assets.sh [4/7] -> generated/calamares/). -->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1000" height="640" viewBox="0 0 1000 640">
+  <defs>
+    <!-- top-centre cyan aura, fully on-canvas (x 170..830, y 20..380) -->
+    <radialGradient id="bdAura" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0.18"/>
+      <stop offset="0.6" stop-color="#38bdf8" stop-opacity="0.05"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- faint lower-left orb, fully on-canvas (x 30..330, y 410..630) -->
+    <radialGradient id="bdOrb" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0.07"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+
+    <!-- horizon hairline, fading to transparent before both ends -->
+    <linearGradient id="bdHorizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#38bdf8" stop-opacity="0.25"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+
+    <linearGradient id="bdMark" x1="0.12" y1="0" x2="0.88" y2="1">
+      <stop offset="0"    stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#bae6fd"/>
+      <stop offset="1"    stop-color="#38bdf8"/>
+    </linearGradient>
+
+    <!-- region oversized on purpose: the mark group carries scale(6.5), so
+         stdDeviation is pre-scale (0.9 * 6.5 ~= 6px on-canvas halo). -->
+    <filter id="bdSoft" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.9" result="b"/>
+      <feFlood flood-color="#38bdf8" flood-opacity="0.32"/>
+      <feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+  </defs>
+
+  <!-- unified window base: MUST stay #090d16 (see contract above) -->
+  <rect width="1000" height="640" fill="#090d16"/>
+
+  <ellipse cx="500" cy="200" rx="330" ry="180" fill="url(#bdAura)"/>
+  <ellipse cx="180" cy="520" rx="150" ry="110" fill="url(#bdOrb)"/>
+
+  <!-- canonical mark, 24u box (byte-identical to windos-cloud.svg) -->
+  <g transform="translate(745 420) scale(6.5)" filter="url(#bdSoft)">
+    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"
+          fill="none" stroke="url(#bdMark)" stroke-width="2.2"
+          stroke-linejoin="round" stroke-linecap="round"/>
+  </g>
+
+  <rect x="120" y="600" width="760" height="1" fill="url(#bdHorizon)"/>
+</svg>

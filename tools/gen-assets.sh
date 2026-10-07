@@ -15,7 +15,11 @@ BRAND="$ROOT/assets/brand"
 OUT="$ROOT/assets/generated"
 [[ "${1:-}" == "--out" && -n "${2:-}" ]] && OUT="$2"
 
-# --- make the bundled Plus Jakarta Sans visible to librsvg -------------------
+# --- make the bundled fonts visible to librsvg --------------------------------
+# $BRAND/fonts ships Plus Jakarta Sans AND Fraunces (italic); both resolve
+# under FONTCONFIG_PATH at render time, so the editorial wallpaper's SVG
+# <text> (Fraunces wordmark, Manrope-first micro-labels with Jakarta/system
+# fallback) needs zero webfont downloads on a stock Bookworm builder.
 FCDIR="$(mktemp -d)"
 trap 'rm -rf "$FCDIR"' EXIT
 cat > "$FCDIR/fonts.conf" <<EOF
@@ -122,18 +126,28 @@ rm -rf "$TMP"
 echo "  spinner/spinner-00..$(printf '%02d' $((FRAMES-1))).png  (${FRAMES} frames @ ${SIZE}px)"
 
 # -------------------------------------------------------------- Wallpaper ---
-echo "[3/7] desktop wallpaper"
-svg2png "$BRAND/wallpaper.svg" "$OUT/wallpaper/windos-zen-1920x1080.png" 1920 1080
-svg2png "$BRAND/wallpaper.svg" "$OUT/wallpaper/windos-zen-1366x768.png"  1366 768
-svg2png "$BRAND/wallpaper.svg" "$OUT/wallpaper/windos-zen-2560x1440.png" 2560 1440
-# legacy CRT / netbook fallback
-svg2png "$BRAND/wallpaper.svg" "$OUT/wallpaper/windos-zen-1024x768.png"  1024 768
+echo "[3/7] desktop wallpaper (editorial master + classic backup)"
+svg2png "$BRAND/wallpaper-editorial.svg" "$OUT/wallpaper/windos-zen-1920x1080.png" 1920 1080
+svg2png "$BRAND/wallpaper-editorial.svg" "$OUT/wallpaper/windos-zen-1366x768.png"  1366 768
+svg2png "$BRAND/wallpaper-editorial.svg" "$OUT/wallpaper/windos-zen-2560x1440.png" 2560 1440
+# legacy CRT / netbook fallback (4:3: master uses slice, so this crops the
+# side margins instead of squashing — text stays inside the safe column)
+svg2png "$BRAND/wallpaper-editorial.svg" "$OUT/wallpaper/windos-zen-1024x768.png"  1024 768
+# pre-editorial default, kept as a backup so no consumer of the old look breaks
+svg2png "$BRAND/wallpaper-classic.svg"   "$OUT/wallpaper/windos-zen-classic-1920x1080.png" 1920 1080
 
 # -------------------------------------------------------------- Calamares ---
 echo "[4/7] calamares installer art"
 svg2png "$BRAND/calamares-sidebar.svg" "$OUT/calamares/windos-sidebar.png" 160 520
 # productWelcome / banner strip reuses the lockup at installer-header scale
 svg2png "$BRAND/windos-logo.svg"       "$OUT/calamares/windos-banner.png"  600 133
+# productIcon MUST be a real PNG (never the .svg renamed) + square productLogo
+svg2png "$BRAND/windos-cloud.svg"      "$OUT/calamares/windos-cloud.png"  128 128
+cp "$OUT/icons/256x256/windos.png"     "$OUT/calamares/windos-logo.png"
+# productWallpaper: NATIVE 1000x640 installer backdrop (matches windowSize).
+# Never substitute a desktop wallpaper here — Calamares tiles productWallpaper
+# to fill, and 16:9 art shows tiling/scale seams in the 1000x640 window.
+svg2png "$BRAND/installer-backdrop.svg" "$OUT/calamares/installer-backdrop.png" 1000 640
 
 # ------------------------------------------------------------------- Logo ---
 echo "[5/7] wordmark lockups"

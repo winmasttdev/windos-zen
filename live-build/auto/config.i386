@@ -1,0 +1,30 @@
+#!/bin/sh
+# ============================================================================
+#  windOS Zen — live-build auto/config (i386 / 32-bit)
+#  Base: Debian 13 "Trixie". BIOS + UEFI, GNOME live session.
+#  Usage: lb config && lb build   (or ./build-iso-i386.sh)
+# ============================================================================
+set -e
+lb config noauto \
+  --mode debian \
+  --distribution trixie \
+  --archive-areas "main contrib non-free non-free-firmware" \
+  --updates true \
+  --security true \
+  --backports false \
+  --binary-images iso-hybrid \
+  --architectures i386 \
+  --linux-flavours 686-pae \
+  --bootloaders "syslinux grub-efi" \
+  --iso-application "windOS Zen" \
+  --iso-publisher "windOS Team" \
+  --iso-volume "WINDOS_ZEN" \
+  --image-name "windos-zen-1.0-trixie-i386" \
+  --checksums sha256 \
+  --firmware-binary true \
+  --firmware-chroot true \
+  --memtest memtest86+ \
+  --win32-loader false \
+  --bootappend-live "boot=live components quiet splash hostname=windos-zen" \
+  --debian-installer none \
+  "${@}"

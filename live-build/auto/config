@@ -25,6 +25,6 @@ lb config noauto \
   --firmware-chroot true \
   --memtest memtest86+ \
   --win32-loader false \
-  --bootappend-live "hostname=windos-zen" \
+  --bootappend-live "boot=live components quiet splash hostname=windos-zen" \
   --debian-installer none \
   "${@}"

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>windOS - Lighter Than Air</title>
+<link rel="icon" href="favicon.ico" sizes="16x16 32x32 48x48">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;1,9..144,300;1,9..144,400&family=Manrope:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0e0d0b;
+  --ink:#ece5d8;
+  --ink-dim:rgba(236,229,216,.6);
+  --ink-faint:rgba(236,229,216,.38);
+  --line:rgba(236,229,216,.12);
+  --accent:#38bdf8;
+  --accent-soft:rgba(56,189,248,.08);
+  --card:#161411;
+  --card-hover:#1c1915;
+  --display:"Fraunces",Georgia,serif;
+  --sans:"Manrope",system-ui,sans-serif;
+  --mono:"Manrope",system-ui,sans-serif;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:90px}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+::selection{background:var(--accent);color:var(--bg)}
+.grain{position:fixed;inset:0;z-index:100;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{width:min(1100px,88vw);margin:0 auto;min-width:0}
+/* nav */
+nav{position:fixed;top:0;left:0;right:0;z-index:50;display:flex;justify-content:space-between;align-items:center;padding:20px min(6vw,56px);background:rgba(14,13,11,.78);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);gap:1rem}
+.brand{display:flex;align-items:center;gap:12px;text-decoration:none;color:var(--ink);font-family:var(--display);font-size:19px;letter-spacing:.01em}
+.brand svg{width:34px;height:22px;flex:none}
+.brand em{color:var(--accent);font-style:italic}
+.brand small{font-family:var(--sans);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);border:1px solid var(--line);padding:2px 8px;border-radius:999px;white-space:nowrap}
+.nav-links{display:flex;gap:28px;align-items:center;flex-wrap:wrap}
+.nav-links a{color:var(--ink-dim);text-decoration:none;font-size:12px;letter-spacing:.14em;text-transform:uppercase;transition:color .3s}
+.nav-links a:hover{color:var(--ink)}
+@media(max-width:820px){.nav-links{display:none}}
+/* hero */
+.hero{min-height:100svh;display:flex;flex-direction:column;justify-content:center;position:relative;overflow:hidden;padding:140px 0 60px}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(900px 500px at 70% 30%,rgba(56,189,248,.09),transparent 60%),radial-gradient(700px 400px at 15% 85%,rgba(56,189,248,.05),transparent 60%);pointer-events:none}
+.hero-meta{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:7vh}
+.hero-cloud{width:120px;height:auto;margin-bottom:34px;opacity:.95}
+h1{font-family:var(--display);font-weight:400;font-size:clamp(46px,8.6vw,112px);line-height:1.03;letter-spacing:-.02em;max-width:12ch}
+h1 em{font-style:italic;color:var(--accent)}
+.mask{display:block;overflow:hidden}
+.mask>span{display:block;transform:translateY(110%);animation:rise 1.2s cubic-bezier(.22,1,.36,1) forwards}
+.mask:nth-child(2)>span{animation-delay:.15s}
+@keyframes rise{to{transform:translateY(0)}}
+.lede{margin-top:4vh;max-width:56ch;color:var(--ink-dim);font-size:clamp(16px,2vw,19px)}
+.lede b{color:var(--ink);font-weight:600}
+.hero-actions{display:flex;gap:26px;align-items:baseline;flex-wrap:wrap;margin-top:4vh}
+.btn-solid{font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--bg);background:var(--ink);padding:13px 26px;border:1px solid var(--ink);transition:background .3s,color .3s,border-color .3s}
+.btn-solid:hover{background:var(--accent);border-color:var(--accent)}
+.btn-line{font-size:13px;letter-spacing:.12em;text-transform:uppercase;text-decoration:none;color:var(--ink-dim);padding-bottom:4px;background:linear-gradient(var(--accent),var(--accent)) no-repeat;background-size:0 1px;background-position:left 100%;transition:background-size .4s,color .3s}
+.btn-line:hover{color:var(--ink);background-size:100% 1px}
+.hero-foot{display:flex;justify-content:space-between;align-items:flex-end;gap:1rem;margin-top:9vh;font-size:13px;color:var(--ink-faint)}
+.hero-foot .mono-note{font-size:12px;letter-spacing:.1em;text-transform:uppercase}
+.scroll-hint{font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-faint);text-align:right}
+.scroll-hint::after{content:"";display:block;width:1px;height:48px;background:linear-gradient(var(--accent),transparent);margin-top:10px;margin-left:auto}
+/* marquee */
+.marquee{border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:16px 0;overflow:hidden;white-space:nowrap}
+.marquee-track{display:inline-block;animation:scroll 30s linear infinite;font-family:var(--display);font-style:italic;font-weight:300;font-size:17px;letter-spacing:.05em;color:var(--ink-dim)}
+.marquee-track i{color:var(--accent);font-style:normal;padding:0 26px}
+@keyframes scroll{to{transform:translateX(-50%)}}
+@media(prefers-reduced-motion:reduce){.marquee-track{animation:none}}
+/* sections */
+section{padding:13vh 0}
+.eyebrow{font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--accent);margin-bottom:30px}
+.section-head{font-family:var(--display);font-weight:400;font-size:clamp(32px,4.5vw,52px);letter-spacing:-.02em;margin-bottom:14px}
+.section-head em{font-style:italic;color:var(--accent)}
+.section-sub{color:var(--ink-dim);font-size:15px;max-width:60ch;margin-bottom:6vh}
+.rule{border:none;border-top:1px solid var(--line)}
+.fine{font-size:12.5px;color:var(--ink-faint);letter-spacing:.02em}
+/* measure bars — thin editorial version */
+.measure{display:grid;grid-template-columns:1fr 1fr;gap:0 64px}
+@media(max-width:760px){.measure{grid-template-columns:1fr;gap:48px}}
+.bar-row{padding:20px 0;border-bottom:1px solid var(--line)}
+.bar-row:first-child{border-top:1px solid var(--line)}
+.bar-label{display:flex;justify-content:space-between;gap:1rem;font-size:14px;margin-bottom:12px}
+.bar-label .v{font-variant-numeric:tabular-nums;color:var(--ink-dim)}
+.bar-label .v.hot{color:var(--accent)}
+.bar-bg{height:2px;background:rgba(236,229,216,.14);position:relative}
+.bar-fill{position:absolute;left:0;top:0;bottom:0;background:var(--ink-faint)}
+.bar-fill.wind{background:var(--accent)}
+.figures{display:flex;align-items:baseline;gap:28px;padding:28px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.figures .fig{font-family:var(--display);font-size:clamp(44px,6vw,72px);font-weight:300;line-height:1;letter-spacing:-.02em}
+.figures .fig small{display:block;font-family:var(--sans);font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin-top:10px}
+.figures .arrow{font-family:var(--display);font-style:italic;color:var(--accent);font-size:28px}
+.figures .was{color:var(--ink-faint)}
+/* ruled spec table */
+.spec{width:100%;border-collapse:collapse;margin-top:6vh;font-size:14.5px}
+.spec th{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;text-align:left;padding:12px 8px 12px 0;border-bottom:1px solid var(--line)}
+.spec td{padding:16px 8px 16px 0;border-bottom:1px solid var(--line);vertical-align:top}
+.spec td.k{font-family:var(--display);font-style:italic;color:var(--ink)}
+.spec td:last-child{color:var(--ink-dim)}
+/* perks — four quiet columns */
+.perks{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;background:var(--line);border:1px solid var(--line)}
+.perk{background:var(--card);padding:34px 28px;transition:background .5s}
+.perk:hover{background:var(--card-hover)}
+.perk .n{font-family:var(--display);font-style:italic;color:var(--accent);font-size:15px}
+.perk h3{font-family:var(--display);font-weight:400;font-size:23px;margin:14px 0 10px;letter-spacing:-.01em}
+.perk p{font-size:14px;color:var(--ink-dim)}
+/* builds — ruled catalogue entries */
+.entries{display:grid;gap:1px;background:var(--line);border:1px solid var(--line)}
+.entry{background:var(--card);padding:38px 36px;transition:background .5s;display:grid;grid-template-columns:64px 1fr auto;gap:0 28px;align-items:start}
+.entry:hover{background:var(--card-hover)}
+.entry .num{font-family:var(--display);font-style:italic;color:var(--ink-faint);font-size:15px}
+.entry h3{font-family:var(--display);font-weight:400;font-size:clamp(24px,3vw,30px);letter-spacing:-.01em;margin-bottom:6px}
+.entry .tag{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent)}
+.entry .desc{font-size:14px;color:var(--ink-dim);max-width:52ch;margin:8px 0 14px}
+.entry ul{list-style:none;font-size:14px;color:var(--ink-dim);margin-bottom:18px}
+.entry ul li{padding-left:18px;position:relative;margin-bottom:4px}
+.entry ul li::before{content:"—";position:absolute;left:0;color:var(--accent)}
+.entry .cta{text-align:right;white-space:nowrap}
+.entry .sha{font-size:11.5px;color:var(--ink-faint);word-break:break-all;margin-top:14px;max-width:280px;margin-left:auto;line-height:1.7}
+@media(max-width:640px){.entry{grid-template-columns:1fr;gap:10px}.entry .cta{text-align:left}.entry .sha{margin-left:0;max-width:100%}}
+/* zen manifesto */
+.manifesto p.big{font-family:var(--display);font-weight:300;font-size:clamp(24px,3.4vw,40px);line-height:1.42;max-width:46ch}
+.manifesto p.big em{color:var(--accent)}
+.manifesto .zen-row{display:flex;justify-content:space-between;align-items:flex-end;gap:2rem;flex-wrap:wrap;margin-top:6vh;padding-top:32px;border-top:1px solid var(--line)}
+.zen-fig{font-family:var(--display);font-style:italic;font-weight:300;font-size:clamp(40px,6vw,64px);color:var(--accent);line-height:1}
+.cmd{font-size:13px;color:var(--ink-dim);letter-spacing:.04em;margin-top:4vh}
+/* mobile ROMs — ledger rows */
+.rom{display:grid;grid-template-columns:200px 1fr;gap:24px;padding:26px 0;border-bottom:1px solid var(--line);font-size:15px}
+.rom:first-of-type{border-top:1px solid var(--line)}
+.rom .name{font-family:var(--display);font-size:20px}
+.rom .name span{display:block;font-family:var(--sans);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin-top:6px}
+.rom .codename{font-size:13px;color:var(--ink-faint);margin-top:4px}
+.rom ul{list-style:none;font-size:14px;color:var(--ink-dim)}
+.rom ul li{padding-left:18px;position:relative;margin-bottom:4px}
+.rom ul li::before{content:"—";position:absolute;left:0;color:var(--accent)}
+@media(max-width:640px){.rom{grid-template-columns:1fr;gap:8px}}
+/* graveyard */
+.grave-row{display:grid;grid-template-columns:90px 1fr auto;gap:24px;padding:20px 0;border-bottom:1px solid var(--line);align-items:baseline}
+.grave-row:first-of-type{border-top:1px solid var(--line)}
+.grave-row .y{font-family:var(--display);font-style:italic;color:var(--accent)}
+.grave-row .a{font-family:var(--display);font-size:19px;text-decoration:line-through;text-decoration-thickness:1px;text-decoration-color:rgba(236,229,216,.4)}
+.grave-row .n{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint);text-align:right}
+@media(max-width:640px){.grave-row{grid-template-columns:1fr;gap:2px}.grave-row .n{text-align:left}}
+/* riddle */
+.riddle{border:1px solid var(--accent);background:var(--accent-soft);padding:clamp(40px,6vw,72px);text-align:center}
+.riddle h2{font-family:var(--display);font-weight:400;font-size:clamp(28px,4vw,44px);letter-spacing:-.02em;margin-bottom:12px}
+.riddle h2 em{font-style:italic;color:var(--accent)}
+.riddle p{font-size:15px;color:var(--ink-dim);max-width:56ch;margin:0 auto}
+.riddle-input{background:transparent;border:none;border-bottom:1px solid var(--line);color:var(--ink);padding:.7rem 1rem;font-size:1.3rem;letter-spacing:.45em;text-transform:uppercase;text-align:center;margin:1.6rem 0 1.2rem;width:min(280px,80vw);outline:none;font-family:var(--display);text-indent:.45em}
+.riddle-input:focus{border-bottom-color:var(--accent)}
+.riddle-input::placeholder{color:var(--ink-faint)}
+#riddleFeedback{min-height:1.5em;font-size:15px}
+/* team */
+.team{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:28px}
+.member{border:1px solid var(--line);background:var(--card);padding:36px 30px;transition:background .5s}
+.member:hover{background:var(--card-hover)}
+.mono-init{width:64px;height:64px;border:1px solid var(--line);display:grid;place-items:center;font-family:var(--display);font-style:italic;font-size:26px;color:var(--accent);margin-bottom:24px;border-radius:50%}
+.member h3{font-family:var(--display);font-weight:400;font-size:24px}
+.member .role{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-faint);margin:6px 0 16px}
+.member .bio{font-family:var(--display);font-style:italic;font-weight:300;font-size:17px;color:var(--ink-dim);line-height:1.55}
+.member .sig{font-size:12px;color:var(--ink-faint);margin-top:14px;letter-spacing:.04em}
+/* footer */
+footer{border-top:1px solid var(--line);padding:12vh 0 48px}
+.big-link{font-family:var(--display);font-size:clamp(30px,6vw,60px);letter-spacing:-.02em;text-decoration:none;color:var(--ink);background:linear-gradient(var(--accent),var(--accent)) no-repeat;background-size:0 2px;background-position:left 100%;transition:background-size .5s cubic-bezier(.22,1,.36,1),color .3s;display:inline-block;padding-bottom:4px}
+.big-link:hover{color:var(--accent);background-size:100% 2px}
+.foot-meta{display:flex;gap:1.5rem;flex-wrap:wrap;margin-top:4vh;font-size:13px;color:var(--ink-faint)}
+.foot-meta a{color:var(--ink-dim);text-decoration:none;border-bottom:1px solid var(--line)}
+.foot-meta a:hover{color:var(--ink)}
+.foot-row{display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap;align-items:flex-end;margin-top:8vh;font-size:13px;color:var(--ink-faint)}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .9s,transform .9s cubic-bezier(.22,1,.36,1)}
+.reveal.in{opacity:1;transform:none}
+img{max-width:100%}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}html{scroll-behavior:auto}.mask>span{transform:none}.reveal{opacity:1;transform:none}}
+</style>
+</head>
+<body>
+<!--
+  ╔══════════════════════════════════════════════╗
+  ║  hi. winmastt was here.                      ║
+  ║  if you're reading this: the cloud is       ║
+  ║  just an SVG. there is no cloud.            ║
+  ║  touch grass, then install windOS.          ║
+  ╚══════════════════════════════════════════════╝
+  p.s. the riddle answer is NOT password123. stop guessing that.
+-->
+<div class="grain" aria-hidden="true"></div>
+
+<nav>
+  <a class="brand" href="#top" aria-label="windOS home">
+    <svg viewBox="0 0 48 22" fill="none" stroke="#ece5d8" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 19H9a6 6 0 1 1 5.7-7.8h1.6a4 4 0 1 1 0 8H14"/><path d="M24 19h9a5 5 0 0 0 1-9.9" stroke="#38bdf8"/><line x1="6" y1="4" x2="6" y2="7" stroke="#38bdf8"/><line x1="40" y1="3" x2="40" y2="6" stroke="#38bdf8"/></svg>
+    wind<em>OS</em> <small>v10-ish</small>
+  </a>
+  <div class="nav-links">
+    <a href="#builds">PC Builds</a>
+    <a href="#zen">windOS Zen</a>
+    <a href="#mobile">Breeze Mobile</a>
+    <a href="#graveyard">Graveyard</a>
+    <a href="#team">Team</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <div class="hero-meta"><span>Est. 3AM · Lighter Than Air</span><span class="tz" data-clock></span></div>
+    <svg class="hero-cloud" viewBox="0 0 48 22" fill="none" stroke="#ece5d8" stroke-width="1" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 19H9a6 6 0 1 1 5.7-7.8h1.6a4 4 0 1 1 0 8H14"/><path d="M24 19h9a5 5 0 0 0 1-9.9" stroke="#38bdf8"/></svg>
+    <h1 id="heroTitle">
+      <span class="mask"><span>windOS 10 LTSC</span></span>
+      <span class="mask"><span>&amp; windOS 11, <em>lighter</em></span></span>
+      <span class="mask"><span>than air.</span></span>
+    </h1>
+    <p class="lede">Your RAM called. <b>It wants a vacation.</b> windOS isn't just an optimization. It's a resurrection. Stripped of spyware, bloat, and nonsense. Forged for modern speed.</p>
+    <div class="hero-actions">
+      <a href="#builds" class="btn-solid">↓ Get Build</a>
+      <a href="https://discord.gg/" target="_blank" class="btn-line">Discord</a>
+      <a href="#" class="btn-line">❤️ Donate</a>
+    </div>
+    <div class="hero-foot">
+      <span class="mono-note">No signup, no launcher, no funny business. // Last updated: whenever yumi slept last</span>
+      <span class="scroll-hint">Scroll</span>
+    </div>
+  </div>
+</header>
+
+<div class="marquee" aria-hidden="true">
+  <div class="marquee-track">your 2009 laptop called, it wants to feel young again <i>·</i> candy crush has left the chat <i>·</i> 100% telemetry-free, tested on real dusty hardware <i>·</i> now with 65 processes instead of 160+ <i>·</i> your 2009 laptop called, it wants to feel young again <i>·</i> candy crush has left the chat <i>·</i> 100% telemetry-free, tested on real dusty hardware <i>·</i> now with 65 processes instead of 160+ <i>·</i></div>
+</div>
+
+<main>
+<section>
+  <div class="wrap">
+    <p class="eyebrow reveal">Fig. 01 — Proof · Numbers don't lie (we checked twice)</p>
+    <h2 class="section-head reveal">Stock Windows <em>vs.</em> windOS</h2>
+    <p class="section-sub reveal">Lower numbers mean your computer can finally breathe.</p>
+    <div class="measure">
+      <div class="reveal">
+        <div class="bar-row">
+          <div class="bar-label"><span>Stock Windows 10 — Idle RAM</span><span class="v">~3.5 GB</span></div>
+          <div class="bar-bg"><div class="bar-fill" style="width:85%"></div></div>
+        </div>
+        <div class="bar-row">
+          <div class="bar-label"><span>windOS 10 — Idle RAM</span><span class="v hot">~1.1 GB</span></div>
+          <div class="bar-bg"><div class="bar-fill wind" style="width:25%"></div></div>
+        </div>
+        <p class="fine" style="margin-top:16px">* measured on winmastt's actual crusty test rig. your mileage may vary. probably better.</p>
+      </div>
+      <div class="reveal">
+        <div class="figures">
+          <div class="fig was">160+<small>Stock processes · yikes</small></div>
+          <span class="arrow">→</span>
+          <div class="fig">~65<small>windOS processes · nice</small></div>
+        </div>
+      </div>
+    </div>
+    <table class="specs spec reveal">
+      <tr><th>Requirement</th><th>Stock Windows</th><th>windOS</th></tr>
+      <tr><td class="k">RAM</td><td>8 GB &amp; a prayer</td><td>hope + dreams</td></tr>
+      <tr><td class="k">CPU</td><td>anything from this decade</td><td>very old silicon (2009 is fine)</td></tr>
+      <tr><td class="k">STORAGE</td><td>60 GB of updates</td><td>whatever's left in the drawer</td></tr>
+      <tr><td class="k">VIBE</td><td>telemetry</td><td>lighter than air</td></tr>
+    </table>
+  </div>
+</section>
+
+<section style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow reveal">The Perks</p>
+    <h2 class="section-head reveal">Four small <em>mercies</em></h2>
+    <div class="perks reveal">
+      <div class="perk"><span class="n">01</span><h3>We removed the junk</h3><p>Seriously, who actually plays Candy Crush on a desktop workstation or gaming machine? Gone forever.</p></div>
+      <div class="perk"><span class="n">02</span><h3>Chrome Eater Eater</h3><p>You know how Chrome eats RAM? windOS eats Chrome. Well, not literally, but you can finally open more than 3 tabs.</p></div>
+      <div class="perk"><span class="n">03</span><h3>No Snitches</h3><p>Zero telemetry. Microsoft doesn't need to know you install windOS at 3 AM. Your data is strictly yours.</p></div>
+      <div class="perk"><span class="n">04</span><h3>Legacy Support</h3><p>Got a PC from 2009? Don't throw it in the trash. windOS runs on hope, dreams, and very old silicon.</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="builds" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow reveal">Pick one · PC Builds</p>
+    <h2 class="section-head reveal">Choose your <em>build</em></h2>
+    <p class="section-sub reveal">Pick your weapon. No ads, no redirect loops, just raw performance.</p>
+    <div class="entries reveal">
+      <div class="entry"><span class="num">01</span>
+        <div><span class="tag">★ Recommended</span><h3>windOS 10 LTSC</h3>
+        <p class="desc">Build 2021 (Stable). Maximum gaming performance and rock-solid stability.</p>
+        <ul><li>Debloated &amp; Optimized</li><li>Zero Telemetry</li><li>Gaming Power Plan Pre-loaded</li></ul></div>
+        <div class="cta"><a href="#" class="btn-solid">Download ISO</a>
+        <p class="sha">SHA256: d8f88292736dc1edf8a0090f528fb6daea4b1a1572ab1a83fa598d4883c73d4e</p></div>
+      </div>
+      <div class="entry"><span class="num">02</span>
+        <div><span class="tag">Frozen edition</span><h3>windOS 11</h3>
+        <p class="desc">No Updates With Updates. Completely frozen for distraction-free rigs.</p>
+        <ul><li>Windows Updates Stripped</li><li>Fluent / Sun Valley Design</li><li>Maximum frame rates in titles</li></ul></div>
+        <!-- todo: bbzer0, put the real link here this time. NOT the rickroll. again. -->
+        <div class="cta"><a href="#" class="btn-solid">Download No-Update</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="zen" class="manifesto" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow reveal">Coming soon · In active dev</p>
+    <p class="big reveal">windOS Zen, the <em>Linux edition.</em> When even stripped-down Windows isn't light enough — an ultra-minimal Debian 13 (Trixie) base, Fluxbox and low-memory daemons.</p>
+    <div class="zen-row reveal">
+      <p class="section-sub" style="margin:0">Live ISO under 180&nbsp;MB idle. For machines that deserve a second life.</p>
+      <div style="text-align:right"><div class="zen-fig">&lt; 180 MB</div><p class="fine">idle memory target</p></div>
+    </div>
+    <p class="cmd reveal">$ sudo apt remove bloat --yes --finally</p>
+  </div>
+</section>
+
+<section id="mobile" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow reveal">For old phones · Breeze Mobile</p>
+    <h2 class="section-head reveal">Custom ROMs, <em>debloat­ed</em></h2>
+    <p class="section-sub reveal">Custom ROMs optimized and debloated specifically for legacy smartphones. 0% TouchWiz bloat, 100% responsiveness.</p>
+    <div class="reveal">
+      <div class="rom"><div><div class="name">Samsung Galaxy J5 2016<span>Beta</span></div><div class="codename">j5x3g / j5xnlte (SM-J510H)</div></div>
+        <ul><li>Forced DSDS (Dual-SIM Dual Standby)</li><li>Keyguard Layout parameter crash fixes</li><li>Lockscreen Clock Colon Alignment fixed</li><li>System Fonts Selector (Plus Jakarta, MiSans, Inter)</li><li>ADB-on-boot pre-authorized key insertion</li></ul></div>
+      <div class="rom"><div><div class="name">Samsung Galaxy J2 2018<span>Stable</span></div><div class="codename">Grand Prime Pro</div></div>
+        <ul><li>Super AMOLED rendering optimization</li><li>Debloated TouchWiz base components</li><li>Enabled Camera2API support</li><li>Custom low-RAM memory management tweaks</li></ul></div>
+      <div class="rom"><div><div class="name">Xiaomi Redmi Note 4<span>Stable</span></div><div class="codename">mido (Snapdragon 625)</div></div>
+        <ul><li>Advanced battery optimizations</li><li>Lawnicons theme pack preloaded</li><li>Magisk root pre-compiled support</li><li>Ultra-fluid 60FPS UI rendering</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section id="graveyard" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow reveal">R.I.P. (not really) · The Bloatware Graveyard</p>
+    <h2 class="section-head reveal">Press F. <em>Actually, don't.</em></h2>
+    <div class="reveal" style="margin-top:5vh">
+      <div class="grave-row"><span class="y">01</span><span class="a">Cortana 🪦</span><span class="n">Unmissed</span></div>
+      <div class="grave-row"><span class="y">02</span><span class="a">OneDrive 🪦</span><span class="n">Unmissed</span></div>
+      <div class="grave-row"><span class="y">03</span><span class="a">Candy Crush Friends 🪦</span><span class="n">Unmissed</span></div>
+      <div class="grave-row"><span class="y">04</span><span class="a">Xbox Game Bar Overlay 🪦</span><span class="n">Unmissed</span></div>
+      <div class="grave-row"><span class="y">05</span><span class="a">Windows Telemetry Agent 🪦</span><span class="n">Unmissed</span></div>
+    </div>
+    <p class="fine reveal" style="margin-top:20px">est. deaths: 5 // funerals attended: 0 // missed by: nobody</p>
+  </div>
+</section>
+
+<section id="riddle" style="padding-top:0">
+  <div class="wrap">
+    <div class="riddle reveal">
+      <p class="eyebrow">★ Mini game ★</p>
+      <h2>Breeze <em>Riddle</em></h2>
+      <p>Guess the 6-letter codename of our ROM project to unlock a hidden developer note!</p>
+      <div><input type="text" id="riddleInput" class="riddle-input" maxlength="6" placeholder="______" aria-label="Riddle answer"></div>
+      <div><button class="btn-solid" onclick="checkRiddle()" style="cursor:pointer">Check Word</button></div>
+      <div id="riddleFeedback" style="margin-top: 1.2rem; font-weight: 600;"></div>
+      <p class="fine" style="margin-top:1rem">hint: it's on this page like 12 times. no inspect-element cheating. (ok, a little cheating is fine.)</p>
+    </div>
+  </div>
+</section>
+
+<section id="team" style="padding-top:0">
+  <div class="wrap">
+    <p class="eyebrow reveal">Sign our guestbook · The Team</p>
+    <h2 class="section-head reveal">Small by <em>choice</em></h2>
+    <p class="section-sub reveal">The people who made this madness possible. Quotes are 100% real (trust).</p>
+    <div class="team reveal">
+      <div class="member"><div class="mono-init">W</div><h3>winmastt</h3><p class="role">Creator</p><p class="bio">"I can fix her." (talking about Windows 10)</p><p class="sig">— xoxo, winmastt · 3:12 AM</p></div>
+      <div class="member"><div class="mono-init">Y</div><h3>Yumi</h3><p class="role">Co-owner</p><p class="bio">"Ensures the system doesn't implode on first boot."</p><p class="sig">— yumi · professional fire extinguisher</p></div>
+      <div class="member"><div class="mono-init">N</div><h3>nn1kk00</h3><p class="role">Operator</p><p class="bio">"Web host &amp; propaganda machine."</p><p class="sig">— nn1kk00 · uptime 99.9% (citation needed)</p></div>
+      <div class="member"><div class="mono-init">B</div><h3>bbzer0</h3><p class="role">Co-CEO</p><p class="bio">"Takes over when the CEO is busy and helps with everything."</p><p class="sig">— bbzer0 · acting ceo since tuesday</p></div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer>
+  <div class="wrap">
+    <p class="eyebrow reveal">Say hello</p>
+    <a class="big-link reveal" href="https://discord.gg/" target="_blank">Lighter than air.</a>
+    <div class="foot-meta reveal"><span>© 2026 windOS Team. Zero bloat guaranteed.</span><span>Best viewed at 800×600.</span><span>Made at 3am.</span><a href="https://discord.gg/" target="_blank">discord</a><a href="#builds">grab a build</a><a href="#top">back to top ↑</a></div>
+    <div class="foot-row"><span>A joke OS, catalogued lovingly.</span><span class="tz" data-clock></span></div>
+  </div>
+  <!-- if the page floats away, that means it worked. - yumi -->
+</footer>
+
+<script>
+  function checkRiddle() {
+    const input = document.getElementById('riddleInput');
+    const feedback = document.getElementById('riddleFeedback');
+    const val = input.value.trim().toUpperCase();
+    if (val === 'BREEZE') {
+      feedback.innerHTML = '<span style="color: #38bdf8;">✨ Riddle Solved!</span><br><div style="background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; border-radius: 12px; padding: 1rem; margin-top: 1rem; max-width: 500px; display: inline-block;"><b>Developer Secret Note:</b> "Building lightweight systems isn\'t about what you add, it\'s about having the guts to remove everything that doesn\'t matter." — Team windOS</div>';
+    } else {
+      feedback.innerHTML = '<span style="color: #ef4444;">Word is incorrect! Try again.</span>';
+    }
+  }
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone?.replace(/_/g, " ") ?? "Local";
+  const tick = () => {
+    const t = new Intl.DateTimeFormat("en-GB", { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false }).format(new Date());
+    document.querySelectorAll("[data-clock]").forEach(el => el.textContent = `${t} · ${tz}`);
+  };
+  tick(); setInterval(tick, 1000);
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } });
+  }, { threshold: 0.15 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+  const hero = document.getElementById("heroTitle");
+  if (!matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    addEventListener("scroll", () => {
+      hero.style.transform = `translateY(${scrollY * 0.12}px)`;
+      hero.style.opacity = Math.max(0, 1 - scrollY / innerHeight);
+    }, { passive: true });
+  }
+</script>
+</body>
+</html>

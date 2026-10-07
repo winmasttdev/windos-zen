@@ -30,15 +30,24 @@ strings:
 images:
     productIcon:         windos-cloud.png
     productLogo:         windos-logo.png
-    productWallpaper:    windos-wallpaper.png
+    # NATIVE 1000x640 installer backdrop (windowSize 1000px,640px): Calamares
+    # tiles productWallpaper to fill, so a 1920x1080 desktop wallpaper shows
+    # tiling/scale seams here. assets/brand/installer-backdrop.svg is composed
+    # for this exact aspect — never point this at a desktop wallpaper again.
+    productWallpaper:    installer-backdrop.png
     productWelcome:      windos-banner.png
 
+# UNIFIED WINDOW TREATMENT: every rim pixel of installer-backdrop.png is
+# exactly #090d16 (verified by border scan at render time). SidebarBackground
+# and the QSS chrome base (calamares.qss) use that same hex so the sidebar,
+# window frame and wallpaper meet with no black-on-deepblue seam.
 style:
    SidebarBackground:        "#090d16"
    SidebarText:              "#94a3b8"
    SidebarTextCurrent:       "#38bdf8"
    SidebarBackgroundCurrent: "#121826"
 
-# no slideshow on purpose: the installer must stay responsive on a
-# single-core Celeron. Information beats animation.
-slideshow:               ""
+# static single slide (no animation: the installer must stay responsive on a
+# single-core Celeron). Empty string is FATAL in this Calamares — must name
+# a real QML file.
+slideshow:               "show.qml"

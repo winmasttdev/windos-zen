@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>windOS - Lighter Than Air</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --ink: #05070b;
+      --panel: #0a0e15;
+      --line: rgba(148, 197, 255, 0.14);
+      --line-strong: rgba(148, 197, 255, 0.34);
+      --sky: #7dd3fc;
+      --amber: #fbbf24;
+      --red: #f87171;
+      --text: #e9eff7;
+      --muted: #8b98a9;
+      --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace;
+      --disp: 'Space Grotesk', 'Segoe UI', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background:
+        linear-gradient(rgba(125, 211, 252, 0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(125, 211, 252, 0.035) 1px, transparent 1px),
+        radial-gradient(1100px 480px at 50% -8%, rgba(125, 211, 252, 0.09), transparent 62%),
+        var(--ink);
+      background-size: 44px 44px, 44px 44px, auto, auto;
+      color: var(--text);
+      font-family: var(--disp);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    ::selection { background: var(--sky); color: #04121c; }
+
+    /* ── Header ─────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 0.5rem 1.5rem;
+      padding: 0.85rem 1.5rem;
+      background: rgba(5, 7, 11, 0.86);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .brand { display: flex; align-items: center; gap: 0.65rem; text-decoration: none; color: var(--text); }
+    .brand-icon { width: 34px; height: 34px; fill: none; stroke: var(--sky); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; filter: drop-shadow(0 0 6px rgba(125, 211, 252, 0.55)); }
+    .brand-name { font-weight: 700; font-size: 1.2rem; letter-spacing: -0.5px; }
+    .brand-tag { font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.12em; color: var(--muted); border: 1px solid var(--line); padding: 0.18rem 0.5rem; }
+
+    nav { display: flex; flex-wrap: wrap; gap: 0.35rem 1.15rem; }
+    nav a { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    nav a i { font-style: normal; color: var(--sky); opacity: 0.55; margin-right: 0.4rem; }
+    nav a:hover { color: var(--sky); }
+
+    .container { max-width: 1040px; margin: 0 auto; padding: 0 1.25rem; }
+    section { scroll-margin-top: 96px; }
+
+    /* ── Hero ───────────────────────────────── */
+    .hero { text-align: center; padding: 5.5rem 0.5rem 3.5rem; }
+
+    .kicker { display: inline-flex; align-items: center; gap: 0.8rem; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--sky); margin-bottom: 1.6rem; }
+    .kicker::before, .kicker::after { content: ""; width: 44px; height: 1px; background: var(--line-strong); }
+
+    .hero h1 { font-size: clamp(1.7rem, 7vw, 5.2rem); font-weight: 700; line-height: 1.04; letter-spacing: -2px; margin-bottom: 1.4rem; }
+    .hero h1 .outline { color: transparent; -webkit-text-stroke: 1.5px var(--sky); }
+    @supports not (-webkit-text-stroke: 1px black) { .hero h1 .outline { color: var(--sky); } }
+
+    .hero p { font-size: 1.08rem; color: var(--muted); max-width: 640px; margin: 0 auto 2.4rem; }
+
+    .hero-btns { display: flex; justify-content: center; gap: 0.9rem; flex-wrap: wrap; }
+
+    .btn { display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.8rem 1.6rem; font-family: var(--mono); font-size: 0.82rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; border: 1px solid transparent; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, background 0.15s, border-color 0.15s; }
+    .btn-primary { background: var(--sky); color: #04121c; box-shadow: 4px 4px 0 rgba(125, 211, 252, 0.35); }
+    .btn-primary:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 rgba(125, 211, 252, 0.45); }
+    .btn-secondary { background: transparent; color: var(--text); border-color: var(--line-strong); }
+    .btn-secondary:hover { transform: translate(-2px, -2px); box-shadow: 4px 4px 0 rgba(148, 197, 255, 0.16); border-color: var(--sky); }
+
+    /* ── Section headers ────────────────────── */
+    .sec-head { display: flex; align-items: baseline; gap: 1rem; margin-bottom: 2rem; }
+    .sec-num { font-family: var(--mono); font-size: 0.78rem; color: var(--sky); flex-shrink: 0; }
+    .sec-head h2 { font-size: clamp(1.5rem, 4vw, 2.1rem); font-weight: 700; letter-spacing: -1px; }
+    .sec-rule { flex: 1; height: 1px; background: var(--line-strong); transform: translateY(-4px); }
+    .sec-sub { color: var(--muted); font-size: 0.95rem; margin: -1rem 0 2rem; }
+
+    /* ── Compare ────────────────────────────── */
+    .compare-section { margin: 3.5rem 0; padding: 2.25rem; background: linear-gradient(180deg, rgba(13, 18, 25, 0.92), rgba(9, 12, 18, 0.92)); border: 1px solid var(--line); }
+    .compare-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 300px), 1fr)); gap: 2.5rem; align-items: center; }
+    .compare-bar-group { margin-bottom: 1.4rem; }
+    .compare-bar-group:last-child { margin-bottom: 0; }
+    .compare-bar-label { display: flex; justify-content: space-between; gap: 1rem; font-family: var(--mono); font-size: 0.76rem; letter-spacing: 0.05em; margin-bottom: 0.55rem; }
+    .bar-bg { height: 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); position: relative; overflow: hidden; }
+    .bar-bg::after { content: ""; position: absolute; inset: 0; background: repeating-linear-gradient(90deg, transparent 0 calc(10% - 1px), rgba(233, 239, 247, 0.08) calc(10% - 1px) 10%); pointer-events: none; }
+    .bar-fill-stock { height: 100%; width: 85%; background: repeating-linear-gradient(-45deg, var(--red) 0 8px, #d64545 8px 16px); }
+    .bar-fill-windos { height: 100%; width: 25%; background: var(--sky); box-shadow: 0 0 14px rgba(125, 211, 252, 0.75); }
+    .proc-row { display: flex; justify-content: space-around; align-items: center; text-align: center; gap: 0.75rem; flex-wrap: wrap; }
+    .proc-num { font-size: clamp(2.1rem, 6vw, 3.1rem); font-weight: 700; letter-spacing: -2px; line-height: 1.1; }
+    .proc-label { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.35rem; }
+    .proc-vs { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); border: 1px solid var(--line-strong); width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+    /* ── Cards ──────────────────────────────── */
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 270px), 1fr)); gap: 1.25rem; margin: 2.5rem 0; }
+    .card { position: relative; background: var(--panel); border: 1px solid var(--line); padding: 1.75rem; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; }
+    .card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 rgba(125, 211, 252, 0.13); border-color: var(--line-strong); }
+    .card h3 { font-size: 1.18rem; margin-bottom: 0.7rem; letter-spacing: -0.5px; }
+    .card p { color: var(--muted); font-size: 0.92rem; }
+    .card ul { color: var(--muted); margin-left: 1.2rem; font-size: 0.88rem; }
+    .card ul li { margin-bottom: 0.3rem; }
+    .card ul li::marker { color: var(--sky); }
+
+    .badge { display: inline-block; font-family: var(--mono); font-size: 0.66rem; font-weight: 600; letter-spacing: 0.18em; text-transform: uppercase; padding: 0.32rem 0.75rem; background: rgba(125, 211, 252, 0.08); border: 1px solid rgba(125, 211, 252, 0.35); color: var(--sky); margin-bottom: 1.1rem; }
+
+    .perk-index { position: absolute; top: 1.15rem; right: 1.2rem; font-family: var(--mono); font-size: 0.7rem; color: var(--muted); border: 1px solid var(--line); padding: 0.12rem 0.5rem; }
+
+    .sha { font-family: var(--mono); font-size: 0.7rem; color: #5b6a7d; margin-top: 0.9rem; word-break: break-all; }
+
+    /* ── Zen ────────────────────────────────── */
+    .zen-card { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 1rem; background: linear-gradient(180deg, rgba(13, 18, 25, 0.95), rgba(7, 10, 16, 0.95)); border: 1px solid rgba(125, 211, 252, 0.4); padding: 2.25rem; }
+    .zen-stat { font-size: clamp(1.9rem, 6vw, 2.9rem); font-weight: 700; color: var(--sky); letter-spacing: -2px; text-align: right; }
+    .zen-stat-label { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.12em; margin-top: 0.3rem; }
+
+    /* ── Graveyard ──────────────────────────── */
+    .graveyard { text-align: center; margin: 4rem 0; padding: 3rem 1.25rem; border: 1px dashed rgba(248, 113, 113, 0.35); background: rgba(248, 113, 113, 0.03); }
+    .graveyard h2 { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 700; letter-spacing: -1px; }
+    .graveyard-tags { display: flex; justify-content: center; gap: 0.9rem; flex-wrap: wrap; margin-top: 1.5rem; }
+    .tombstone { font-family: var(--mono); font-size: 0.85rem; background: rgba(255, 255, 255, 0.03); border: 1px solid var(--line); padding: 0.7rem 1.2rem; color: #fda4af; text-decoration: line-through; }
+
+    /* ── Riddle ─────────────────────────────── */
+    .riddle-box { position: relative; background: #070a10; border: 1px solid var(--sky); padding: 2.75rem 1.5rem 2.5rem; text-align: center; margin: 4rem 0; box-shadow: 0 0 44px rgba(125, 211, 252, 0.12), inset 0 0 70px rgba(125, 211, 252, 0.03); }
+    .riddle-box::before { content: "TERMINAL // GUESS.EXE"; position: absolute; top: 0.85rem; left: 1.1rem; font-family: var(--mono); font-size: 0.62rem; letter-spacing: 0.22em; color: var(--muted); }
+    .riddle-box h2 { font-size: clamp(1.6rem, 5vw, 2.2rem); font-weight: 700; letter-spacing: -1px; }
+    .riddle-input { background: #04060a; border: 1px solid var(--line-strong); color: var(--sky); font-family: var(--mono); padding: 0.85rem 1rem; font-size: 1.1rem; letter-spacing: 0.5em; text-transform: uppercase; text-align: center; margin: 1.2rem 0; width: min(230px, 100%); outline: none; }
+    .riddle-input:focus { border-color: var(--sky); box-shadow: 0 0 0 3px rgba(125, 211, 252, 0.15); }
+    .riddle-input::placeholder { color: rgba(139, 152, 169, 0.35); }
+
+    /* ── Team ───────────────────────────────── */
+    .team-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); gap: 1.25rem; margin-top: 2rem; }
+    .team-card { background: var(--panel); border: 1px solid var(--line); padding: 1.5rem; text-align: center; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; }
+    .team-card:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 rgba(251, 191, 36, 0.12); border-color: var(--line-strong); }
+    .team-role { font-family: var(--mono); font-size: 0.66rem; letter-spacing: 0.22em; color: var(--amber); font-weight: 600; margin-bottom: 0.6rem; }
+    .team-card h3 { font-size: 1.3rem; letter-spacing: -0.5px; }
+
+    /* ── Footer ─────────────────────────────── */
+    footer { border-top: 1px solid var(--line); padding: 2rem 0; text-align: center; font-family: var(--mono); font-size: 0.76rem; color: var(--muted); margin-top: 5rem; }
+
+    @media (max-width: 480px) {
+      header { padding: 0.8rem 1rem; }
+      .container { padding: 0 1rem; }
+      .compare-section, .zen-card { padding: 1.5rem 1.25rem; }
+      .sec-sub { margin-left: 0; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header & Cloud Logo -->
+  <header>
+    <a href="#" class="brand">
+      <svg class="brand-icon" viewBox="0 0 32 32">
+        <path d="M10 20.5h11.5a4.5 4.5 0 0 0 .77-8.95A6.25 6.25 0 0 0 10.3 9.9 4.65 4.65 0 0 0 10 20.5Z"/>
+        <path d="M4.5 25h10"/>
+        <path d="M8 28h13"/>
+      </svg>
+      <span class="brand-name">windOS</span>
+      <span class="brand-tag">LTSC · 11</span>
+    </a>
+    <nav>
+      <a href="#builds"><i>01</i>PC Builds</a>
+      <a href="#zen"><i>02</i>windOS Zen</a>
+      <a href="#mobile"><i>03</i>Breeze Mobile</a>
+      <a href="#graveyard"><i>04</i>Graveyard</a>
+      <a href="#team"><i>05</i>Team</a>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="kicker">LIGHTER THAN AIR</div>
+      <h1>windOS 10 LTSC &amp; windOS 11.<br><span class="outline">So light your PC might float away.</span></h1>
+      <p>Your RAM called. It wants a vacation. windOS isn't just an optimization. It's a resurrection. Stripped of spyware, bloat, and nonsense. Forged for modern speed.</p>
+      <div class="hero-btns">
+        <a href="#builds" class="btn btn-primary">Get Build</a>
+        <a href="https://discord.gg/" target="_blank" class="btn btn-secondary">Discord</a>
+        <a href="#" class="btn btn-secondary">❤️ Donate</a>
+      </div>
+    </section>
+
+    <!-- Stock vs windOS Benchmarks -->
+    <section class="compare-section">
+      <div class="sec-head">
+        <span class="sec-num">01</span>
+        <h2>Stock Windows vs. windOS</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <p class="sec-sub">Lower numbers mean your computer can finally breathe.</p>
+
+      <div class="compare-grid">
+        <div>
+          <div class="compare-bar-group">
+            <div class="compare-bar-label">
+              <span>Stock Windows 10 (Idle RAM)</span>
+              <span>~3.5 GB</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill-stock"></div></div>
+          </div>
+          <div class="compare-bar-group">
+            <div class="compare-bar-label">
+              <span>windOS 10 (Idle RAM)</span>
+              <span style="color: var(--sky); font-weight: 600;">~1.1 GB</span>
+            </div>
+            <div class="bar-bg"><div class="bar-fill-windos"></div></div>
+          </div>
+        </div>
+
+        <div class="proc-row">
+          <div>
+            <div class="proc-num" style="color: var(--red);">160+</div>
+            <div class="proc-label">Stock Processes</div>
+          </div>
+          <div class="proc-vs">VS</div>
+          <div>
+            <div class="proc-num" style="color: var(--sky);">~65</div>
+            <div class="proc-label">windOS Processes</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Key Perks -->
+    <section class="grid" style="margin-top: 3.5rem;">
+      <div class="card">
+        <span class="perk-index">01</span>
+        <h3>🍬 We removed the junk</h3>
+        <p>Seriously, who actually plays Candy Crush on a desktop workstation or gaming machine? Gone forever.</p>
+      </div>
+      <div class="card">
+        <span class="perk-index">02</span>
+        <h3>⚡ Chrome Eater Eater</h3>
+        <p>You know how Chrome eats RAM? windOS eats Chrome. Well, not literally, but you can finally open more than 3 tabs.</p>
+      </div>
+      <div class="card">
+        <span class="perk-index">03</span>
+        <h3>🤫 No Snitches</h3>
+        <p>Zero telemetry. Microsoft doesn't need to know you install windOS at 3 AM. Your data is strictly yours.</p>
+      </div>
+      <div class="card">
+        <span class="perk-index">04</span>
+        <h3>💾 Legacy Support</h3>
+        <p>Got a PC from 2009? Don't throw it in the trash. windOS runs on hope, dreams, and very old silicon.</p>
+      </div>
+    </section>
+
+    <!-- PC Builds -->
+    <section id="builds" style="margin-top: 4rem;">
+      <div class="sec-head">
+        <span class="sec-num">02</span>
+        <h2>Choose Your Build</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <p class="sec-sub">Pick your weapon. No ads, no redirect loops, just raw performance.</p>
+
+      <div class="grid">
+        <div class="card" style="border-color: var(--sky);">
+          <div class="badge">RECOMMENDED</div>
+          <h3>windOS 10 LTSC</h3>
+          <p style="margin-bottom: 1rem;">Build 2021 (Stable). Maximum gaming performance and rock-solid stability.</p>
+          <ul style="color: var(--text-muted); margin-left: 1.2rem; margin-bottom: 1.5rem; font-size: 0.9rem;">
+            <li>Debloated &amp; Optimized</li>
+            <li>Zero Telemetry</li>
+            <li>Gaming Power Plan Pre-loaded</li>
+          </ul>
+          <a href="#" class="btn btn-primary" style="width: 100%;">Download ISO</a>
+          <p class="sha">SHA256: d8f88292736dc1edf8a0090f528fb6daea4b1a1572ab1a83fa598d4883c73d4e</p>
+        </div>
+
+        <div class="card">
+          <div class="badge" style="background: rgba(255,255,255,0.05); color: #fff; border-color: var(--line);">FROZEN EDITION</div>
+          <h3>windOS 11</h3>
+          <p style="margin-bottom: 1rem;">No Updates With Updates. Completely frozen for distraction-free rigs.</p>
+          <ul style="color: var(--text-muted); margin-left: 1.2rem; margin-bottom: 1.5rem; font-size: 0.9rem;">
+            <li>Windows Updates Stripped</li>
+            <li>Fluent / Sun Valley Design</li>
+            <li>Maximum frame rates in titles</li>
+          </ul>
+          <a href="#" class="btn btn-secondary" style="width: 100%;">Download No-Update</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- windOS Zen Linux Section -->
+    <section id="zen" style="margin-top: 4rem;">
+      <div class="sec-head">
+        <span class="sec-num">03</span>
+        <h2>windOS Zen (Linux Edition)</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <div class="zen-card">
+        <div>
+          <div class="badge">COMING SOON / IN ACTIVE DEV</div>
+          <p style="color: var(--muted); max-width: 600px; margin-top: 0.5rem;">
+            When even stripped-down Windows isn't light enough. An ultra-minimal Arch/Debian hybrid philosophy powered by Fluxbox and low-memory daemons.
+          </p>
+        </div>
+        <div class="zen-stat">
+          &lt; 180 MB
+          <div class="zen-stat-label">Idle Memory Target</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Breeze Mobile -->
+    <section id="mobile" style="margin-top: 5rem;">
+      <div class="sec-head">
+        <span class="sec-num">04</span>
+        <h2>windOS Breeze Mobile</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <p class="sec-sub">Custom ROMs optimized and debloated specifically for legacy smartphones. 0% TouchWiz bloat, 100% responsiveness.</p>
+
+      <div class="grid">
+        <div class="card">
+          <div class="badge">BETA</div>
+          <h3>Samsung Galaxy J5 2016</h3>
+          <p style="font-size: 0.85rem; color: var(--sky); margin-bottom: 1rem;">j5x3g / j5xnlte (SM-J510H)</p>
+          <ul style="color: var(--text-muted); font-size: 0.88rem; margin-left: 1.2rem;">
+            <li>Forced DSDS (Dual-SIM Dual Standby)</li>
+            <li>Keyguard Layout parameter crash fixes</li>
+            <li>Lockscreen Clock Colon Alignment fixed</li>
+            <li>System Fonts Selector (Plus Jakarta, MiSans, Inter)</li>
+            <li>ADB-on-boot pre-authorized key insertion</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="badge">STABLE</div>
+          <h3>Samsung Galaxy J2 2018</h3>
+          <p style="font-size: 0.85rem; color: var(--sky); margin-bottom: 1rem;">Grand Prime Pro</p>
+          <ul style="color: var(--text-muted); font-size: 0.88rem; margin-left: 1.2rem;">
+            <li>Super AMOLED rendering optimization</li>
+            <li>Debloated TouchWiz base components</li>
+            <li>Enabled Camera2API support</li>
+            <li>Custom low-RAM memory management tweaks</li>
+          </ul>
+        </div>
+
+        <div class="card">
+          <div class="badge">STABLE</div>
+          <h3>Xiaomi Redmi Note 4</h3>
+          <p style="font-size: 0.85rem; color: var(--sky); margin-bottom: 1rem;">mido (Snapdragon 625)</p>
+          <ul style="color: var(--text-muted); font-size: 0.88rem; margin-left: 1.2rem;">
+            <li>Advanced battery optimizations</li>
+            <li>Lawnicons theme pack preloaded</li>
+            <li>Magisk root pre-compiled support</li>
+            <li>Ultra-fluid 60FPS UI rendering</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- The Bloatware Graveyard -->
+    <section id="graveyard" class="graveyard">
+      <div class="sec-head" style="justify-content: center;">
+        <span class="sec-num">05</span>
+        <h2>The Bloatware Graveyard</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <p style="color: var(--muted);">Press F to pay respects. Actually, don't.</p>
+      <div class="graveyard-tags">
+        <div class="tombstone">Cortana 🪦</div>
+        <div class="tombstone">OneDrive 🪦</div>
+        <div class="tombstone">Candy Crush Friends 🪦</div>
+        <div class="tombstone">Xbox Game Bar Overlay 🪦</div>
+        <div class="tombstone">Windows Telemetry Agent 🪦</div>
+      </div>
+    </section>
+
+    <!-- Breeze Riddle Mini Game -->
+    <section id="riddle" class="riddle-box">
+      <div class="badge">MINI GAME</div>
+      <h2>Breeze Riddle</h2>
+      <p style="color: var(--muted); margin-top: 0.5rem;">
+        Guess the 6-letter codename of our ROM project to unlock a hidden developer note!
+      </p>
+      <div>
+        <input type="text" id="riddleInput" class="riddle-input" maxlength="6" placeholder="______">
+      </div>
+      <button class="btn btn-primary" onclick="checkRiddle()">Check Word</button>
+      <div id="riddleFeedback" style="margin-top: 1.2rem; font-weight: 600;"></div>
+    </section>
+
+    <!-- The Team -->
+    <section id="team" style="margin-top: 4rem;">
+      <div class="sec-head">
+        <span class="sec-num">06</span>
+        <h2>The Team</h2>
+        <span class="sec-rule"></span>
+      </div>
+      <p class="sec-sub">The people who made this madness possible.</p>
+
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-role">CREATOR</div>
+          <h3>winmastt</h3>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem;">"I can fix her."<br><em>(talking about Windows 10)</em></p>
+        </div>
+        <div class="team-card">
+          <div class="team-role">CO-OWNER</div>
+          <h3>Yumi</h3>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem;">Ensures the system doesn't implode on first boot.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-role">OPERATOR</div>
+          <h3>nn1kk00</h3>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem;">Web host &amp; propaganda machine.</p>
+        </div>
+        <div class="team-card">
+          <div class="team-role">CO-CEO</div>
+          <h3>bbzer0</h3>
+          <p style="color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem;">Takes over when the CEO is busy and helps with everything.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <p>© 2026 windOS Team. Lighter Than Air. Zero bloat guaranteed.</p>
+  </footer>
+
+  <!-- Mini-Game Script -->
+  <script>
+    function checkRiddle() {
+      const input = document.getElementById('riddleInput');
+      const feedback = document.getElementById('riddleFeedback');
+      const val = input.value.trim().toUpperCase();
+
+      if (val === 'BREEZE') {
+        feedback.innerHTML = `
+          <span style="color: #38bdf8;">✨ Riddle Solved!</span><br>
+          <div style="background: rgba(56, 189, 248, 0.1); border: 1px solid #38bdf8; border-radius: 12px; padding: 1rem; margin-top: 1rem; max-width: 500px; display: inline-block;">
+            <b>Developer Secret Note:</b> "Building lightweight systems isn't about what you add, it's about having the guts to remove everything that doesn't matter." — Team windOS
+          </div>
+        `;
+      } else {
+        feedback.innerHTML = `<span style="color: #ef4444;">Word is incorrect! Try again.</span>`;
+      }
+    }
+  </script>
+</body>
+</html>

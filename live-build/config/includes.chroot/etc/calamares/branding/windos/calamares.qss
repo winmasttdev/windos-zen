@@ -2,6 +2,12 @@
    windOS Zen — Calamares stylesheet (Qt5 QSS)
    Dark Fluent-ish: #090d16 surfaces, #121826 raised, #38bdf8 accent,
    8-10 px radii, no gradients heavier than two stops.
+
+   UNIFIED WINDOW TREATMENT: #090d16 is the single chrome base. It is also
+   SidebarBackground (branding.desc) AND every rim pixel of
+   assets/brand/installer-backdrop.png (productWallpaper, native 1000x640),
+   so sidebar / window / wallpaper meet with no black-on-deepblue seam.
+   Raised cards (#0d1322/#121826) are intentional layering, not chrome.
    =========================================================================== */
 
 /* --- application chrome -------------------------------------------------- */
@@ -15,6 +21,12 @@ QWidget {
 }
 
 QMainWindow, QDialog, #CalamaresUtils__Widget {
+    background-color: #090d16;
+}
+
+/* Wizard pages + scroll containers inherit the chrome base (never the
+   default palette grey): keeps every page flush with the backdrop rim. */
+QStackedWidget, QScrollArea, QScrollArea > QWidget > QWidget {
     background-color: #090d16;
 }
 

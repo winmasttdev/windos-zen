@@ -21,7 +21,7 @@
     </filter>
   </defs>
 
-  <rect width="900" height="200" fill="#090d16"/>
+  <!-- transparent background: Calamares/QML composites this over the window -->
 
   <!-- canonical mark: stroke-only cloud (see windos-cloud.svg) -->
   <g transform="translate(46 36) scale(5)" filter="url(#glow)">
