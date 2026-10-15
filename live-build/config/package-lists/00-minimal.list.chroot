@@ -28,9 +28,18 @@ tzdata
 sudo
 ca-certificates
 
-# --- boot splash (Module 2) --------------------------------------------------
-plymouth
-plymouth-themes
+# --- boot splash: INTENTIONALLY ABSENT ---------------------------------------
+# plymouth + plymouth-themes were dropped here (owner decision: verbose boot,
+# no splash). This is a plain removal, NOT a mask: nothing we ship hard-depends
+# on plymouth. Verified in debian:trixie with live-build's own install flag
+# (`apt-get install -o APT::Install-Recommends=false`): the full 64-package set
+# resolves cleanly (1142 pkgs) with zero plymouth-family packages.
+#
+# Gotcha for future edits: `desktop-base` (pulled in by gnome-core) *Recommends*
+# `plymouth-label`, which Depends plymouth -> plymouth-themes. live-build installs
+# with Install-Recommends=false, so that edge stays cut. Do NOT flip that on, or
+# plymouth comes straight back through desktop-base.
+# Theme sources are kept in modules/02-plymouth/ for a future opt-in re-enable.
 
 # --- installer (Module 4) ----------------------------------------------------
 calamares

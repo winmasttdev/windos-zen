@@ -55,6 +55,9 @@ exec > >(tee -a "$LOG_FILE") 2>&1 || true
 
 log() { printf '[windos-de-setup] %s\n' "$*"; }
 die() { log "ERROR: $*"; exit 1; }
+# Never die silent: under set -e, any failing command reports file+line
+# to both the log and Calamares' output before the exit propagates.
+trap 'log "FATAL: line $LINENO exited with status $?"' ERR
 
 norm() { printf '%s' "$1" | tr '[:upper:]' '[:lower:]' | tr -d '[:space:]'; }
 
@@ -191,6 +194,22 @@ fi
 log "running $SCRIPT..."
 bash "$SCRIPT"
 log "post-install script finished"
+
+# --- de-live the target: the installer must not survive onto installed systems
+rm -f /usr/share/applications/windos-installer.desktop \
+      /usr/bin/windos-install 2>/dev/null || true
+if command -v apt-get >/dev/null 2>&1; then
+    DEBIAN_FRONTEND=noninteractive apt-get purge -y calamares 2>/dev/null || \
+        log "WARN: calamares purge failed; launcher already removed"
+fi
+log "live installer removed from target"
+
+# --- locales backfill: live ISO carries a curated 10-locale set; the target
+# gets the full set (disk is cheap here, networks exist here).
+if command -v apt-get >/dev/null 2>&1; then
+    DEBIAN_FRONTEND=noninteractive apt-get install -y locales-all 2>/dev/null || \
+        log "WARN: locales-all backfill failed; curated set remains"
+fi
 
 mkdir -p "$STAMP_DIR"
 printf '%s edition=%s script=%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" "$EDITION" "$SCRIPT" > "$STAMP"

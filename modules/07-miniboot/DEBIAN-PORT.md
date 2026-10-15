@@ -123,3 +123,61 @@ miniboot-refresh.sh,zz-miniboot}` — all `bash -n` clean.
     loop (`deb13-port.log`). Fixed by the hook skeleton (§4b) + the §3.3
     modprobe branch (tested as a container-side copy; `windos-preinit.sh`
     itself untouched).
+
+## 5. BOOTSTRAP-STATUS (2026-10-13) — what a live GRUB rescue proves for this port
+
+Not part of the port. Recorded because it pins down the one thing the
+MiniBoot prototype could not answer from inside a throwaway container:
+**what a Debian root actually needs on disk before it is bootable at all.**
+
+The windOS Zen 1.0 "Breeze" (build 15) test install shipped with a valid
+msdos partition table, a bootable ext4 root and two complete
+kernel/initrd pairs in `/boot` — and zero bytes of boot code. SeaBIOS saw
+nothing to load. Cause was installer-side, not kernel-side (see
+`modules/04-calamares/etc/calamares/settings.conf` and
+`live-build/config/package-lists/08-bootloader.list.chroot`), but the
+requirements it exposed are worth writing down here, because MiniBoot
+bootstraps *from the same disk* and inherits every one of them:
+
+1. **Boot code is a separate artifact from kernels.** `unpackfs` + `initramfs`
+   produce a perfectly good `/boot` with no bootloader whatsoever. Something
+   must write stage 1. GRUB needs `grub-pc-bin` (the `i386-pc/*.mod` payload)
+   **plus** `grub2-common` (`grub-install`, `update-grub`). `grub-common`
+   alone ships `grub-mkconfig` and nothing executable — it looks like GRUB is
+   installed and is not. Under `APT::Install-Recommends=false` nothing pulls
+   the other two in; they must be named.
+2. **Order is load-bearing.** `grub-mkconfig` scans `/boot`, so every
+   `vmlinuz-*` needs its matching `initrd.img-*` *before* the config is
+   generated. Hence Calamares must run `bootloader` after `initramfs` and
+   before `umount` (the target's `/boot` has to be mounted and writable when
+   `grub-install` runs). §1's kernel-pairing rule for the ESP
+   (`vmlinuz-miniboot` + `miniboot-switch.img`) is the same invariant with a
+   different pair — a switcher listing a kernel with no image next to it is
+   just as unbootable as a GRUB menu entry with no initrd.
+3. **`grub-install` wants a whole disk, not a partition.** It takes
+   `<installPath>` (the disk), writes the MBR, and embeds a blocklist for
+   `core.img` in the post-MBR gap. Cheap post-install assertion, byte 0 of
+   the MBR: stock stub `ba 64 55 fd`, GRUB `eb 63 90` / `eb 52 90`. A build
+   check that greps for this catches "installer ran, bootloaderless" without
+   booting anything.
+4. **A Debian kernel needs nothing from the bootloader port's own kit.** No
+   `/boot/*-ucode.img` to pack (§1 confirmed it): early microcode is already
+   prepended into every `initrd.img`. The rescued target booted
+   `vmlinuz-7.2.10-2-liquorix-amd64` with its stock 158 MB `initrd.img` on
+   the first try, SeaBIOS → GRUB 2.12 menu → systemd → `gdm.service` →
+   windOS greeter. In-guest proof that the bootloader is genuinely in charge
+   and not just present: `grub-common.service` ("Record successful boot for
+   GRUB") finishing `[OK]` on the very first boot.
+5. **First-stage ownership collides — plan for it.** `grub-pc` owns LBA 0 and
+   the embedding gap. The ported MiniBoot as designed is EFI-only
+   (`efibootmgr`, `EFI/BOOT/shimx64.efi`, `vmlinuz-miniboot` on the ESP), so
+   today it coexists with GRUB: MiniBoot owns ESP + NVRAM, GRUB owns
+   `/boot/grub`, and neither writes the other's sector. **The day windOS Boot
+   grows a BIOS (CSM) path** — syslinux `boot.img`, or an MBR chainload — it
+   is writing exactly the bytes `grub-install` just wrote, and one of them has
+   to be installed last, deliberately. That ordering decision belongs in
+   `install.sh` (§1, still unported), not in the installer.
+6. **The fallback has to keep working.** This rescue is the argument for
+   keeping GRUB even where MiniBoot takes over: the GRUB entry stays
+   selectable from the submenu (`GRUB_DISABLE_SUBMENU: false` in
+   `grubcfg.conf`) precisely so a bad switcher build is not a dead machine.

@@ -6,8 +6,10 @@ set -euo pipefail
 TARGET="${1:-/}"
 DCONF_SRC="$(dirname "$0")/windos-gnome.dconf"
 echo "[windos-gnome] applying dconf profile..."
+# Best-effort per-user load. SUDO_USER is unset under Calamares (no sudo
+# session in-target) — default to root so set -u never fires here.
 if [ -f "$DCONF_SRC" ]; then
-  sudo -u "$SUDO_USER" dbus-launch dconf load / < "$DCONF_SRC" 2>/dev/null || \
+  sudo -u "${SUDO_USER:-root}" dbus-launch dconf load / < "$DCONF_SRC" 2>/dev/null || \
     dconf load / < "$DCONF_SRC" 2>/dev/null || true
 fi
 echo "[windos-gnome] enabling extensions..."

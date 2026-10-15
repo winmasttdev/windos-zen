@@ -12,17 +12,30 @@
 #    * no per-frame allocations: all sprites are created once at load
 #
 #  Plymouth script-plugin notes (verified against upstream source,
-#  src/plugins/splash/script/):
+#  src/plugins/splash/script/ in plymouth 24.004.60 = Debian trixie):
 #    * Window exposes ONLY GetX/GetY/GetWidth/GetHeight (+ SetX/SetY and
 #      the background colour setters) — there is NO GetScreenWidth/Height.
 #    * refresh callbacks are invoked with ZERO arguments — keep your own
 #      clock (FRAME counter driven by SetRefreshRate).
 #    * boot-progress callback signature is (duration, progress), in that
 #      order. display_password is (prompt, bullets) where bullets is the
-#      TOTAL count to show, not a per-keystroke delta.
+#      TOTAL count to show, not a per-keystroke delta. display_message /
+#      hide_message take ONE string argument; quit takes none.
 #    * there is NO Plymouth.SetHidePasswordFunction; the daemon calls the
 #      display-normal handler when a prompt ends — clear secrets there.
 #    * single `|` is the object-merge operator, NOT boolean OR — use `||`.
+#    * the COMPLETE Plymouth.* surface (script_add_native_function calls
+#      in script-lib-plymouth.c) is: SetRefreshFunction, SetRefreshRate,
+#      SetBootProgressFunction, SetRootMountedFunction,
+#      SetKeyboardInputFunction, SetUpdateStatusFunction,
+#      SetDisplayNormalFunction, SetDisplayPasswordFunction,
+#      SetDisplayQuestionFunction, SetDisplayPromptFunction,
+#      SetDisplayHotplugFunction, SetValidateInputFunction,
+#      SetDisplayMessageFunction, SetHideMessageFunction, SetQuitFunction,
+#      SetSystemUpdateFunction, GetCapslockState, GetMode.
+#      Plymouth.SetMessageFunction exists only as a compatibility alias
+#      (`Plymouth.SetMessageFunction = Plymouth.SetDisplayMessageFunction`
+#      in script-lib-plymouth.script) — the canonical name is the latter.
 #
 #  Assets expected next to this file (see windos-zen.plymouth ImageDir):
 #    windos-lockup.png            512x300  cloud + wordmark, centred
@@ -118,6 +131,56 @@ while (i < PW_MAX) {
 }
 PW_OPEN  = 0;
 
+# ------------------------------------------------- boot message line --------
+# WHY THIS IS ALL GUARDED (details support, investigated end to end):
+#
+# 1. ESC "details" mode is NOT a theme feature, it is a plymouth-daemon
+#    feature. main.c: on_escape_pressed() -> toggle_between_splash_and_details()
+#    -> hide_splash() + ply_boot_splash_free() (i.e. THIS script is torn
+#    down, quit_callback runs) -> show_detailed_splash() -> the daemon opens
+#    its own details splash (details.so) and replays the messages it buffered
+#    in on_display_message() via show_messages(). Nothing in a .script theme
+#    is consulted, so there is nothing here to implement — and nothing we
+#    could implement, because the theme object is already freed by then.
+#
+# 2. The script plugin has no text widget, but it does have one text ENTRY
+#    point: Image.Text(text, r, g, b, a, font, align) (script-lib-image.script
+#    -> native Image._Text in script-lib-image.c). It rasterises through
+#    ply_label_*(), which loads a label plugin: label-pango.so, else
+#    label-freetype.so (ply_label_load_plugin in
+#    src/libply-splash-graphics/ply-label.c). Debian's plymouth package ships
+#    NEITHER — /usr/lib/<triplet>/plymouth/ contains only details.so,
+#    script.so, text.so, tribar.so and renderers/{drm,frame-buffer}.so — so
+#    here Image.Text() returns a 0x0 buffer. (It cannot crash: every
+#    ply_label_* entry point NULL-checks its plugin interface.)
+#
+# So: probe the platform ONCE, at load, and use real text rendering only on a
+# plymouth that can actually rasterise. On windOS Zen the probe costs two
+# failed dlopen()s and the message callbacks stay no-ops — matching the
+# "pre-rendered blits only, no text rendering at boot" rule above. The probe
+# also self-disables if a rasteriser ever disappears mid-boot.
+#
+# On any such build a boot message is drawn as a single centred line under
+# the progress bar (no per-frame rasterisation: the image is built once per
+# distinct message string, then faded in on our own clock), and the spinner
+# is suppressed while a message is on screen — something is being named, so
+# the "still waiting" animation has nothing left to say.
+MSG_TEXT_OK = 0;
+MSG_TEXT    = "";
+MSG_OPEN    = 0;
+MSG_ALPHA   = 0;
+MSG_TEXT_Y  = SCREEN_Y + SCREEN_H / 2 + 200;   # below the bar
+MSG_SPR     = Sprite();                         # empty sprite: the draw
+MSG_SPR.SetZ(14);                               # loop skips image-less
+MSG_SPR.SetOpacity(0);                          # sprites (`if (!sprite->image)`)
+
+# Probe on its own statement pair (never `Image.Text(...).GetWidth()`:
+# chained access on a call result is the one pongo construct this theme has
+# no reason to be the first user of).
+MSG_PROBE   = Image.Text("Ag", 0.94, 0.97, 1.0, 1.0, NULL, "left");
+MSG_PROBE_W = MSG_PROBE.GetWidth();
+if (MSG_PROBE_W > 0) { MSG_TEXT_OK = 1; }
+
 # --------------------------------------------------------------- layout ----
 LOCKUP_SPR.SetX(SCREEN_X + SCREEN_W / 2 - LOCKUP_W / 2);
 LOCKUP_SPR.SetY(SCREEN_Y + SCREEN_H / 2 - LOCKUP_H / 2 - 60);
@@ -154,8 +217,8 @@ fun refresh_callback() {
     BAR_TRACK.SetOpacity(alpha * 0.9);
 
     # spinner: 20 fps content on a 30 Hz clock, hidden until fade-in
-    # is half done
-    if (alpha > 0.5) {
+    # is half done, and suppressed while a boot message is on screen
+    if (alpha > 0.5 && MSG_OPEN == 0) {
         idx = Math.Int(FRAME * 20 / REFRESH_HZ) % SPIN_FRAMES;
         if (idx != LAST_SPIN_IDX) {
             SPIN_SPR.SetImage(SPIN_IMG[idx]);
@@ -165,6 +228,15 @@ fun refresh_callback() {
     } else {
         SPIN_SPR.SetOpacity(0);
     }
+
+    # message line: 300 ms fade in / 200 ms fade out, stepped on our own
+    # clock. No allocation, no rasterisation inside the refresh handler.
+    if (MSG_OPEN == 1 && MSG_TEXT_OK == 1) {
+        if (MSG_ALPHA < 1) { MSG_ALPHA = Math.Min(1, MSG_ALPHA + 1 / 9); }
+    } else if (MSG_ALPHA > 0) {
+        MSG_ALPHA = Math.Max(0, MSG_ALPHA - 1 / 6);
+    }
+    MSG_SPR.SetOpacity(MSG_ALPHA);
 
     # quantised progress bar: flip segment opacity, nothing else
     shown = Math.Int(BOOT_PROG * BAR_SEGS);
@@ -179,8 +251,9 @@ fun refresh_callback() {
     }
 }
 
-# password dialog: we cannot rasterise text in a script theme, so we echo
-# bullets as dots under the spinner — enough to know the prompt is live.
+# password dialog: a script theme has no reliable way to label the prompt
+# (see the Image.Text investigation above), so we echo bullets as dots under
+# the spinner — enough to know the prompt is live.
 # `bullets` is the TOTAL count to display; render exactly that many.
 fun display_password_callback(prompt, bullets) {
     PW_OPEN = 1;
@@ -205,12 +278,49 @@ fun display_normal_callback() {
     }
 }
 
-# boot messages: windOS Zen boots quiet. Keeping them off-screen is the
-# whole point of `quiet splash loglevel=3`. (Debug: plymouth-set-default-theme
-# details && update-initramfs -u)
-fun display_message_callback(message) { }
-fun hide_message_callback(message)     { }
+# boot messages: windOS Zen boots quiet, so the default is silence. The
+# callbacks stay REGISTERED (both Plymouth.SetDisplayMessageFunction and
+# Plymouth.SetHideMessageFunction are real — see the API list in the header)
+# because unregistering them would not make plymouth any quieter: the daemon
+# buffers every message itself (on_display_message in main.c) whether or not
+# a theme listens, which is exactly what makes ESC-details work.
+#
+# On a plymouth without a label plugin (i.e. ours: no label-pango.so, no
+# label-freetype.so) there is nothing to draw with and these two return at
+# once — see the "boot message line" note above for the full investigation.
+# On a plymouth that CAN rasterise, one message becomes one centred line
+# under the bar, and the spinner stops until the message is hidden.
+fun display_message_callback(message) {
+    if (MSG_TEXT_OK == 0) { return; }
+    if (message == "") { MSG_OPEN = 0; return; }              # nothing to draw
+    if (message == MSG_TEXT && MSG_OPEN == 1) { return; }   # redelivery
 
+    MSG_IMG = Image.Text(message, 0.90, 0.94, 1.0, 1.0, NULL, "center");
+    MSG_W = MSG_IMG.GetWidth();
+    if (MSG_W <= 0) { MSG_TEXT_OK = 0; return; }            # rasteriser gone
+
+    MSG_TEXT = message;
+    MSG_OPEN = 1;
+    MSG_SPR.SetImage(MSG_IMG);
+    MSG_SPR.SetX(SCREEN_X + SCREEN_W / 2 - MSG_W / 2);
+    MSG_SPR.SetY(MSG_TEXT_Y);
+}
+
+# The daemon hides messages in the order it showed them, so only the line
+# currently on screen may be cleared.
+fun hide_message_callback(message) {
+    if (MSG_TEXT_OK == 0) { return; }
+    if (message != MSG_TEXT) { return; }
+    MSG_OPEN = 0;                    # refresh_callback fades it out
+}
+
+# quit_callback: takes ZERO arguments (script-lib-plymouth.c calls it via
+# script_execute_object with no parameters) and runs on stop_script_animation,
+# which the script plugin calls from BOTH hide_splash_screen() (ESC, timeout,
+# daemon switch) and destroy_plugin() — i.e. exactly once, immediately before
+# one final sprite refresh. So blanking every sprite here is not just tidy, it
+# IS the teardown: the last frame the user can ever see is black, with no
+# half-faded lockup or a stuck password bullet left on the VT.
 fun quit_callback() {
     LOCKUP_SPR.SetOpacity(0);
     SPIN_SPR.SetOpacity(0);
@@ -219,6 +329,9 @@ fun quit_callback() {
     while (i < BAR_SEGS) { BAR_SPR[i].SetOpacity(0); i = i + 1; }
     i = 0;
     while (i < PW_MAX) { PW_SPR[i].SetOpacity(0); i = i + 1; }
+    MSG_SPR.SetOpacity(0);
+    MSG_OPEN = 0;
+    MSG_ALPHA = 0;
     PW_OPEN = 0;
 }
 

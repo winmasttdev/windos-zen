@@ -1,0 +1,24 @@
+# ============================================================================
+#  windOS Zen — 05-kernel-liquorix.list.chroot
+#  Kernel shootout: Liquorix (Zen-tuned) instead of the stock Debian kernel.
+#
+#  Repo is trixie (verified: https://liquorix.net/debian/dists/trixie/ ships
+#  linux-image-liquorix-amd64 7.2-18.1~trixie), pulled via
+#  config/archives/liquorix.list.chroot.
+#
+#  Unqualified names: apt picks the highest version from the one enabled
+#  third-party suite. No release qualification is used because Liquorix has
+#  no -backports/-updates suites.
+#
+#  NOTE: --linux-flavours liquorix-amd64 in auto/config makes live-build's own
+#  chroot_linux-image schedule linux-image-liquorix-amd64, so the stock Debian
+#  kernel is never pulled in. Only ONE vmlinuz-* exists, which keeps the
+#  globs in binary_grub_cfg ("basename chroot/boot/vmlinuz-*${DEFAULT_FLAVOUR}"
+#  => *liquorix-amd64) and binary_syslinux single-valued. The entries below are
+#  kept for explicitness; apt dedupes against the flavour-scheduled image.
+#  Do NOT set --linux-packages none to achieve this: that also short-circuits
+#  binary_linux-image (chroot_archives stage 24), which is the step that copies
+#  vmlinuz/initrd into binary/live/, so the ISO ends up with no kernel.
+# ============================================================================
+linux-image-liquorix-amd64
+linux-headers-liquorix-amd64

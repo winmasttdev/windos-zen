@@ -10,7 +10,7 @@ LB_BINARY_FILESYSTEM="fat32"
 LB_APT_INDICES="true"
 
 # Set boot parameters
-LB_BOOTAPPEND_LIVE="boot=live components quiet splash hostname=windos-zen"
+LB_BOOTAPPEND_LIVE="boot=live components hostname=windos-zen"
 
 # Set boot parameters
 LB_BOOTAPPEND_INSTALL=""

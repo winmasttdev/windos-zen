@@ -1,0 +1,152 @@
+# ===========================================================================
+#  windOS Zen — GRUB theme (Module 8)
+#  /usr/share/grub/themes/windos-zen/theme.txt
+#
+#  Activated by GRUB_THEME in /etc/default/grub, which grubcfg writes in the
+#  installed target and 00_header turns into `set theme=` + `insmod gfxmenu`
+#  + `loadfont` for every *.pf2 sitting next to this file.
+#
+#  ── GRAMMAR (verified against grub2 2.12 gfxmenu/theme_loader.c) ──────────
+#  Top level accepts ONLY these keys, and every value must be a quoted
+#  string or the loader aborts the whole theme:
+#      title-text title-font title-color message-font message-color
+#      message-bg-color terminal-font terminal-box terminal-border
+#      terminal-left terminal-top terminal-width terminal-height
+#      desktop-image desktop-image-scale-method
+#      desktop-image-h-align desktop-image-v-align desktop-color
+#  Object types are ONLY: label image vbox hbox canvas progress_bar
+#  circular_progress boot_menu.  There is no `hline`, no `menu`, no
+#  `button` — inventing one is a hard parse error, so the separators below
+#  are drawn with the backdrop's baked hairline instead.
+#  Every geometry accepts absolute px and the proportional forms `50%`,
+#  `100%-80`, and combinations.
+#
+#  ── LAYOUT ──────────────────────────────────────────────────────────────
+#  Pure percentages, so one file is resolution-independent from 1024x768
+#  (a 2009 netbook, the worst case for this distro) to 1920x1080. Nothing is
+#  hardcoded to a 1080p coordinate. NOT yet boot-tested in QEMU — verify on
+#  build16 before calling this done.
+#
+#  Colours are the windOS brand tokens, identical to the Calamares QSS and
+#  the Fluxbox style: surfaces #090d16/#121826, hairline #1e293b, accent
+#  cyan #38bdf8, text ramp #f8fafc / #cbd5e1 / #94a3b8.
+#
+#  Fonts: Plus Jakarta Sans converted to PF2 by grub-mkfont and shipped in
+#  THIS directory. GRUB can only draw from pf2, so this is the only way the
+#  boot menu gets the brand typeface. Any *.pf2 here is auto-loadfonted by
+#  00_header; if they are ever deleted the theme still parses and falls back
+#  to Unifont — every `font =` below is advisory, never fatal.
+# ===========================================================================
+
+# Empty title on purpose: gfxmenu hardcodes draw_title() at x centred, y=40
+# (gfxmenu/view.c), which is not where this layout wants the wordmark. The
+# labels below own the whole top of the screen instead.
+title-text: ""
+title-font: "WindOS Zen Bold 40"
+title-color: "#f8fafc"
+
+# Backdrop. "stretch" makes GRUB scale the bitmap to exactly the screen size
+# (gfxmenu/view.c init_background), so the menu is never letterboxed on an
+# odd aspect ratio — deliberate, the art is a gradient and survives it.
+# desktop-color is the fallback if the PNG cannot be decoded at all, so a
+# broken image still gives a dark windOS screen instead of white.
+desktop-color: "#090d16"
+desktop-image: "backdrop.png"
+desktop-image-scale-method: "stretch"
+
+terminal-font: "WindOS Zen Regular 16"
+terminal-border: "2"
+
+# --- wordmark block, left column, aligned to the hairline baked into
+#     backdrop.png at 10% / 15% -------------------------------------------
++ label {
+    left = 10%
+    top = 7%
+    width = 62%
+    height = 48
+    text = "windOS Zen"
+    font = "WindOS Zen Bold 40"
+    color = "#f8fafc"
+    align = "left"
+}
+
+# NO DECIMALS ANYWHERE IN A GEOMETRY. parse_proportional_spec() calls
+# grub_strtoul(), which stops dead at '.', sees a non-'%' character, adds 0 and
+# re-enters the loop on the same pointer — an infinite loop inside the theme
+# loader that hangs the firmware before the menu is ever drawn. Integer
+# percentages and `100%-N` only.
++ label {
+    left = 10%
+    top = 12%
+    width = 62%
+    height = 22
+    text = "L I G H T E R   T H A N   A I R"
+    font = "WindOS Zen Regular 16"
+    color = "#7dd3fc"
+    align = "left"
+}
+
+# --- the menu -------------------------------------------------------------
+# 24px items with a 24px bold accent for the selection: readable at 1024x768
+# without the theme having to ship two full layouts.
++ boot_menu {
+    left = 10%
+    top = 19%
+    width = 74%
+    height = 56%
+
+    item_font = "WindOS Zen Regular 24"
+    selected_item_font = "WindOS Zen Bold 24"
+    item_color = "#cbd5e1"
+    selected_item_color = "#38bdf8"
+
+    item_height = 34
+    item_padding = 4
+    item_spacing = 2
+    item_icon_space = 0
+
+    # No icons anywhere in the windOS menu (menuentry --class windos is not
+    # set), and a zero-width scrollbar keeps the right edge clean; the menu
+    # scrolls internally once it outgrows 56% of the screen.
+    icon_width = 0
+    icon_height = 0
+    scrollbar = "false"
+}
+
+# --- footer: countdown bar, then the key legend ----------------------------
++ progress_bar {
+    id = "__timeout__"
+    left = 10%
+    top = 100%-58
+    width = 26%
+    height = 18
+    fg_color = "#38bdf8"
+    bg_color = "#121826"
+    border_color = "#1e293b"
+    text_color = "#38bdf8"
+    text = "@TIMEOUT_NOTIFICATION_SHORT@"
+    font = "WindOS Zen Regular 16"
+}
+
++ label {
+    left = 10%
+    top = 100%-32
+    width = 74%
+    height = 20
+    text = "enter — boot    ·    e — edit entry    ·    c — command line"
+    font = "WindOS Zen Regular 16"
+    color = "#64748b"
+    align = "left"
+}
+
+# --- edition tag, top right (the backdrop's cyan aura sits behind it) ------
++ label {
+    left = 62%
+    top = 8%
+    width = 28%
+    height = 20
+    text = "ZEN — Nº 01"
+    font = "WindOS Zen Regular 16"
+    color = "#94a3b8"
+    align = "right"
+}

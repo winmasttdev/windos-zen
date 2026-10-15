@@ -1,0 +1,76 @@
+# ============================================================================
+#  windOS Zen — 08-bootloader.list.chroot
+#  GRUB for the INSTALLED target. Added 2026-10-13 after the autopsy of
+#  windos-install-test/disk2.qcow2 (build 15) came back bootloaderless.
+#
+#  WHY THIS FILE EXISTS (the whole point of it)
+#  --------------------------------------------
+#  Calamares' `bootloader` job does NOT run grub-install from the live
+#  session — it uses check_target_env_call(), which chroots into the freshly
+#  installed root and execs the binary *there*:
+#
+#      modules/bootloader/main.py:610  run_grub_install()
+#      modules/bootloader/main.py:634  check_target_env_call([ ...configuration["grubInstall"], "--target=i386-pc", ... ])
+#
+#  The "target" is the squashfs rootfs, which is exactly this package list.
+#  So the platform code has to live HERE, not just on the ISO builder and not
+#  just in /usr/share/calamares. Before this file the chroot carried only
+#  `grub-common` (pulled in transitively), which provides grub-mkconfig and
+#  nothing else: no /usr/sbin/grub-install, no /usr/lib/grub/i386-pc/,
+#  no /usr/lib/grub/x86_64-efi/. Confirmed on the patient:
+#      /usr/sbin/grub-mkconfig  present
+#      /usr/sbin/grub-install   ABSENT
+#      /usr/sbin/update-grub    ABSENT
+#      /usr/lib/grub/i386-pc/   ABSENT
+#
+#  live-build installs with APT::Install-Recommends=false, and neither
+#  `calamares` nor `live-boot` Recommends the grub platform packages, so
+#  they can never arrive by accident. Name them explicitly.
+#
+#  WHAT EACH ONE BUYS
+#  -------------------
+#  grub-common          grub-mkconfig (+ libcalamares scripts). Already
+#                       arrives transitively; listed for explicitness so a
+#                       future dependency change can't silently drop it.
+#  grub2-common         /usr/sbin/grub-install, /usr/sbin/update-grub.
+#                       This is the binary bootloader/main.py actually execs.
+#                       Postinst only writes /etc/default/grub — verified in
+#                       the patient chroot, it does NOT touch any disk, so it
+#                       is safe in a build chroot.
+#  grub-pc-bin          /usr/lib/grub/i386-pc/*.mod — the BIOS payload that
+#                       SeaBIOS/CSM machines need. This is the one the
+#                       SeaBIOS-booted test install was missing.
+#  grub-efi-amd64-bin   /usr/lib/grub/x86_64-efi/*.mod — the UEFI payload.
+#                       LB_BOOTLOADERS="syslinux grub-efi" in config/binary
+#                       makes this a dual ISO, so UEFI installs need it too.
+#  efibootmgr           grub-install --target=x86_64-efi shells out to it to
+#                       create the NVRAM entry. Recommends-only upstream, so
+#                       --no-install-recommends would strand UEFI installs.
+#  shim-signed          the Secure Boot chain (pulls grub-efi-amd64-signed).
+#                       Not used by the `grub` bootloader path; it is here so
+#                       flipping bootloader.conf to efiBootLoader: sb-shim
+#                       later does not need a second rebuild.
+#
+#  DELIBERATELY NOT LISTED
+#  -----------------------
+#  grub-pc   — the *metapackage*. Its postinst owns the debconf question
+#              "install GRUB to which device" and will try to write an MBR.
+#              In a build chroot that is wrong (and interactive). The
+#              bootloader module only ever needs grub-pc-bin's payload, and
+#              it passes the target device itself via bootLoader.installPath
+#              (set by the `partition` module) to grub-install --force.
+#              Verified: grub-pc-bin + grub2-common is a complete, working
+#              substitute — see the autopsy run that resurrected the patient.
+# ============================================================================
+
+# --- core GRUB tooling, executed chrooted into the installed target ---------
+grub-common
+grub2-common
+
+# --- platform payloads, one per firmware family the hybrid ISO supports -----
+grub-pc-bin
+grub-efi-amd64-bin
+
+# --- UEFI install support ---------------------------------------------------
+efibootmgr
+shim-signed

@@ -1,6 +1,9 @@
 // windOS Zen — Calamares slideshow (static, on purpose)
 // A single branded slide. No animation: the installer must stay
 // responsive on a single-core Celeron.
+// TEXT RULE: every string is light on the #090d16 base — #f8fafc headline,
+// #cbd5e1 body (was #94a3b8, too dim at 11pt on the projector-throw path),
+// #38bdf8 accent. Never a dark hex here.
 import QtQuick 2.15
 
 Rectangle {
@@ -34,7 +37,7 @@ Rectangle {
             anchors.horizontalCenter: parent.horizontalCenter
             text: "Building lightweight systems isn't about what you add,\nit's about having the guts to remove everything that doesn't matter."
             horizontalAlignment: Text.AlignHCenter
-            color: "#94a3b8"
+            color: "#cbd5e1"
             font.pointSize: 11
         }
 

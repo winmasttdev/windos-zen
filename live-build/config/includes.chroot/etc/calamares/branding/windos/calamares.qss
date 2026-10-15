@@ -8,6 +8,13 @@
    assets/brand/installer-backdrop.png (productWallpaper, native 1000x640),
    so sidebar / window / wallpaper meet with no black-on-deepblue seam.
    Raised cards (#0d1322/#121826) are intentional layering, not chrome.
+
+   TEXT RULE: every user-visible string is light-on-dark — nothing may render
+   near-black on these surfaces. Every control therefore carries an explicit
+   `color` (item views and menus included: they paint from the palette, not
+   from a `color` cascade). Text ramp: #f8fafc primary, #e2e8f0 controls,
+   #cbd5e1 secondary, #64748b disabled. The single dark label is
+   QPushButton:default, whose #38bdf8 fill is a light surface by design.
    =========================================================================== */
 
 /* --- application chrome -------------------------------------------------- */
@@ -16,8 +23,11 @@ QWidget {
     color: #e2e8f0;
     font-family: "Plus Jakarta Sans", "DejaVu Sans", sans-serif;
     font-size: 10pt;
-    selection-background-color: #164e63;
-    selection-color: #e0f2fe;
+    /* ONE selection ramp for the whole app: deep cyan #0e7490 + white.
+       #ffffff on #0e7490 is ~5.4:1, and it is dark enough that a selected
+       run of text inside a QLineEdit/QTextEdit stays legible. */
+    selection-background-color: #0e7490;
+    selection-color: #ffffff;
 }
 
 QMainWindow, QDialog, #CalamaresUtils__Widget {
@@ -30,27 +40,11 @@ QStackedWidget, QScrollArea, QScrollArea > QWidget > QWidget {
     background-color: #090d16;
 }
 
-/* --- sidebar (steps list) -------------------------------------------------- */
-#sidebarApp, QListView#sidebarApp {
-    background-color: #090d16;
-    border: none;
-    padding: 8px 0;
-}
-QListView::item {
-    color: #94a3b8;
-    padding: 9px 14px;
-    border-left: 3px solid transparent;
-    background: transparent;
-}
-QListView::item:selected {
-    color: #38bdf8;
-    background-color: #121826;
-    border-left: 3px solid #38bdf8;
-}
-QListView::item:hover:!selected {
-    color: #cbd5e1;
-    background-color: #0d1322;
-}
+/* --- sidebar ordering note: the steps-list rules live at the END of this file,
+   below every generic QAbstractItemView rule. Qt QSS specificity counts type
+   selectors only (the ::item pseudo-element does not count), so
+   `QListView::item` and `QAbstractItemView::item` tie, and the LATER rule
+   wins. Sidebar last == sidebar keeps its own colours. */
 
 /* --- buttons ---------------------------------------------------------------- */
 QPushButton {
@@ -68,6 +62,10 @@ QPushButton:hover {
 QPushButton:pressed {
     background-color: #0b1120;
 }
+/* Default button = filled accent pill. This is the ONE place where a dark
+   label is correct: #38bdf8 is a LIGHT surface, so #04121c reads at ~9:1.
+   Making it white here would drop it to ~1.9:1. Accent-on-dark stays light
+   everywhere else (see QGroupBox::title, sidebar current, combo selection). */
 QPushButton:default {
     background-color: #38bdf8;
     color: #04121c;
@@ -79,7 +77,9 @@ QPushButton:default:hover {
 }
 QPushButton:disabled {
     background-color: #0d1322;
-    color: #475569;
+    /* was #475569: 2.2:1 on #0d1322, effectively unreadable. #64748b is
+       ~4.0:1 and still reads as "disabled". */
+    color: #64748b;
     border-color: #1e293b;
 }
 
@@ -98,9 +98,19 @@ QLineEdit:focus, QSpinBox:focus, QComboBox:focus, QTextEdit:focus {
 QComboBox::drop-down { border: none; width: 22px; }
 QComboBox QAbstractItemView {
     background-color: #0d1322;
+    /* explicit color: the popup list falls back to the DEFAULT Qt palette
+       otherwise, which paints dark text on our dark popup. */
+    color: #e2e8f0;
     border: 1px solid #1e293b;
-    selection-background-color: #164e63;
+    selection-background-color: #0e7490;
+    selection-color: #ffffff;
 }
+/* Popup rows are items too, and they are what the user sees as "selected".
+   Two type selectors here vs one on the generic ::item rules below, so this
+   pair wins regardless of declaration order. Still light-on-dark: #e2e8f0 /
+   #ffffff on the #0d1322 popup, never the palette's near-black. */
+QComboBox QAbstractItemView::item:!selected { color: #e2e8f0; }
+QComboBox QAbstractItemView::item:selected { background-color: #0e7490; color: #ffffff; }
 
 /* --- checkboxes / radios ------------------------------------------------------ */
 QCheckBox, QRadioButton { spacing: 8px; color: #cbd5e1; background: transparent; }
@@ -116,32 +126,108 @@ QCheckBox::indicator:checked, QRadioButton::indicator:checked {
     border-color: #38bdf8;
 }
 
-/* --- lists / trees / tables ----------------------------------------------------- */
+/* --- lists / trees / tables -----------------------------------------------------
+   Item views paint their rows from the palette, NOT from a plain `color`
+   cascade, so each one needs its own light-on-dark pair (selection/hover too):
+   without this the partition module's mount-point tree and the package/netinstall
+   lists render default-palette near-black text on #0d1322. */
 QListView, QTreeView, QTableView, QColumnView {
     background-color: #0d1322;
+    color: #e2e8f0;
     alternate-background-color: #0f1626;
     border: 1px solid #1e293b;
     border-radius: 6px;
 }
+QAbstractItemView::item { color: #e2e8f0; }
+/* UNSELECTED rows (DE-picker names, netinstall descriptions, mount-point tree)
+   had no rule of their own and fell through to the DEFAULT palette, i.e.
+   near-black text on our near-black #0d1322. #cbd5e1 is ~12.5:1 there. */
+QAbstractItemView::item:!selected { color: #cbd5e1; }
+/* CASCADE ORDER below is deliberate: ::item, ::item:!selected, ::hover,
+   ::item:selected and ::item:selected:hover all carry ONE type selector, so Qt
+   resolves equal-specificity rules last-one-wins. Hover therefore brightens an
+   unselected row (#f1f5f9 on #16233c, ~13:1) and selection always beats hover
+   - previously hover was declared AFTER :selected and repainted a
+   selected+hovered row with the plain hover grey. */
+QAbstractItemView::item:hover { background-color: #16233c; color: #f1f5f9; }
+QAbstractItemView::item:selected,
+QAbstractItemView::item:selected:!active {
+    background-color: #0e7490;
+    color: #ffffff;
+}
+QAbstractItemView::item:selected:hover {
+    background-color: #0e7490;
+    color: #ffffff;
+}
+/* Header rows (netinstall's "Name | Description") painted solid WHITE bars:
+   neither QHeaderView itself nor its ::section had a rule, so both stayed on
+   the default palette. Pinned to the raised surface #121826; #cbd5e1 on it is
+   ~11.9:1. QHeaderView itself is needed too, for the area the sections do not
+   cover, which is default-palette white otherwise. */
+QHeaderView {
+    background-color: #121826;
+    border: none;
+}
 QHeaderView::section {
     background-color: #121826;
-    color: #94a3b8;
+    color: #cbd5e1;
     border: none;
     border-bottom: 1px solid #1e293b;
     padding: 6px 8px;
 }
+QTableCornerButton { background-color: #121826; border: none; }
 
-/* --- progress --------------------------------------------------------------------- */
+/* --- text views (summary page, long descriptions) --------------------------------
+   The summary page's Location / Keyboard / Partitions blocks are QTextBrowser /
+   QTextEdit VIEWPORTS and had no rule at all, so they came out solid white
+   with near-black text. Pinned to the chrome base (#090d16) + primary ramp
+   (#f8fafc, ~18.6:1). Placed AFTER the inputs block so it deliberately wins
+   over QTextEdit's #0d1322 there - both are dark surfaces and the foreground
+   only gets lighter, so no text field becomes less readable. */
+QTextBrowser, QTextEdit {
+    background-color: #090d16;
+    color: #f8fafc;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+}
+
+/* --- menus (partition context menus: resize / mount point / flags) ------------- */
+QMenuBar {
+    background-color: #090d16;
+    color: #e2e8f0;
+}
+QMenu {
+    background-color: #121826;
+    color: #e2e8f0;
+    border: 1px solid #1e293b;
+    padding: 4px;
+}
+QMenu::item {
+    color: #e2e8f0;
+    padding: 5px 22px 5px 20px;
+    background: transparent;
+}
+QMenu::item:selected { background-color: #0e7490; color: #ffffff; }
+QMenu::item:disabled { color: #64748b; }
+QMenu::separator { height: 1px; background: #1e293b; margin: 4px 8px; }
+
+/* --- progress ---------------------------------------------------------------------
+   The percentage text used to be `transparent`, i.e. the one string the user
+   actually watches during exec was invisible. It is now LIGHT. The chunk is
+   one step deeper (cyan-700 instead of the #38bdf8 accent) on purpose: the
+   label is centred over track+chunk, and #f8fafc on #38bdf8 is ~1.9:1 while
+   #f8fafc on #0e7490 is ~4.7:1, so the number stays readable at every fill
+   level. -------------------------------------------------------------------------- */
 QProgressBar {
     background-color: #0d1322;
     border: none;
     border-radius: 5px;
     height: 10px;
     text-align: center;
-    color: transparent;
+    color: #f8fafc;
 }
 QProgressBar::chunk {
-    background-color: #38bdf8;
+    background-color: #0e7490;
     border-radius: 5px;
 }
 
@@ -165,7 +251,7 @@ QScrollBar::add-page, QScrollBar::sub-page { background: transparent; }
 /* --- tabs (partitioning etc.) ---------------------------------------------------------- */
 QTabWidget::pane { border: 1px solid #1e293b; border-radius: 6px; }
 QTabBar::tab {
-    background: #0d1322; color: #94a3b8;
+    background: #0d1322; color: #cbd5e1;
     padding: 7px 16px; border: none;
 }
 QTabBar::tab:selected { background: #121826; color: #38bdf8; }
@@ -193,3 +279,152 @@ QGroupBox::title {
 }
 QLabel { background: transparent; border: none; color: #e2e8f0; }
 QLabel#appLogoLabel { background: transparent; }
+
+/* --- build-16 white-box kill ------------------------------------------------------
+   Screenshots (build 15) showed default-palette WHITE rectangles on the module
+   pages: PARTITIONS tree, DESKTOP EDITION picker list, NETINSTALL list,
+   SUMMARY blocks. Root cause: those widgets paint from QPalette::Base / their
+   inner VIEWPORT, not from any `color` cascade, and the concrete classes
+   (QListWidget, QTreeWidget, QTableWidget) had no rule of their own. Same fix
+   pattern as the rest of this file: explicit background-color + color per
+   class, AFTER the generic rules so equal-specificity ties resolve here.
+   Inputs (line edits, combos, spinboxes) stay on the raised #0d1322 editable
+   surface with light text: that is the "light" surface against the #090d16
+   chrome, and paper-white fields would regress the contrast pass above.
+   ------------------------------------------------------------------------------- */
+
+/* Pane / frame chrome: splitters, frames, tab panes and stacked pages that
+   fell through to the default palette. NOTE: QFrame also matches QLabel and
+   QAbstractScrollArea subclasses by inheritance, so labels, item views and
+   text views are re-pinned AFTER it (equal specificity, later wins). Item-view
+   VIEWPORTS need no rule of their own: they are transparent and paint the
+   view widget's background (verified offscreen — a view-level
+   background-color fully determines the visible area). */
+QFrame {
+    background-color: #090d16;
+    color: #e2e8f0;
+}
+QSplitter {
+    background-color: #090d16;
+}
+QSplitter::handle {
+    background-color: #1e293b;
+}
+QTabWidget::pane {
+    background-color: #090d16;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+}
+QTabWidget > QWidget, QStackedWidget > QWidget, QWizardPage {
+    background-color: #090d16;
+    color: #e2e8f0;
+}
+QAbstractScrollArea {
+    background-color: #0d1322;
+    color: #e2e8f0;
+}
+QScrollArea, QScrollArea > QWidget, QScrollArea > QWidget > QWidget {
+    background-color: #090d16;
+    color: #e2e8f0;
+}
+
+/* Item views, concrete classes named (PARTITIONS tree/table, DESKTOP EDITION
+   picker, NETINSTALL list): re-pinned after QFrame so the raised #0d1322
+   surface survives the inheritance tie. Headers verified above, unchanged. */
+QListView, QListWidget, QTreeView, QTreeWidget,
+QTableView, QTableWidget, QColumnView {
+    background-color: #0d1322;
+    color: #e2e8f0;
+    alternate-background-color: #0f1626;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+}
+/* Unselected rows (picker names, netinstall descriptions, mount-point tree):
+   #cbd5e1 on #0d1322. Selected rows use the app-wide selection ramp. */
+QListWidget::item:!selected, QTreeWidget::item:!selected,
+QTableWidget::item:!selected {
+    color: #cbd5e1;
+}
+QListWidget::item:selected, QTreeWidget::item:selected,
+QTableWidget::item:selected, QListWidget::item:selected:!active,
+QTreeWidget::item:selected:!active {
+    background-color: #0e7490;
+    color: #ffffff;
+}
+QListWidget::item:hover:!selected, QTreeWidget::item:hover:!selected,
+QTableWidget::item:hover:!selected {
+    background-color: #16233c;
+    color: #f1f5f9;
+}
+/* Text views re-pinned after QAbstractScrollArea (inheritance tie, later
+   wins): SUMMARY blocks stay on the chrome base #090d16 + #f8fafc (~18.6:1),
+   as the contrast pass above specifies. */
+QTextBrowser, QTextEdit {
+    background-color: #090d16;
+    color: #f8fafc;
+    border: 1px solid #1e293b;
+    border-radius: 6px;
+}
+
+/* SUMMARY blocks: group frames carry the chrome base and light text. */
+QGroupBox {
+    background-color: #090d16;
+    color: #e2e8f0;
+    border: 1px solid #1e293b;
+    border-radius: 8px;
+    margin-top: 14px;
+    padding-top: 8px;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 12px;
+    color: #38bdf8;
+}
+
+/* Module-page text re-pinned after QFrame. Disabled labels sit at ~4:1 —
+   knowingly under 4.5:1, same as the disabled-button ramp: they must read as
+   inactive, not as body text. */
+QLabel {
+    background: transparent;
+    border: none;
+    color: #e2e8f0;
+}
+QLabel:disabled {
+    color: #64748b;
+}
+QCheckBox, QRadioButton {
+    spacing: 8px;
+    color: #cbd5e1;
+    background: transparent;
+}
+QToolTip {
+    background-color: #121826;
+    color: #e2e8f0;
+    border: 1px solid #38bdf8;
+    border-radius: 4px;
+    padding: 4px 8px;
+}
+
+/* --- sidebar (steps list): MUST stay last, see ordering note at the top ------
+   Colours mirror branding.desc `style:`. */
+#sidebarApp, QListView#sidebarApp {
+    background-color: #090d16;
+    color: #cbd5e1;
+    border: none;
+    padding: 8px 0;
+}
+QListView::item {
+    color: #cbd5e1;
+    padding: 9px 14px;
+    border-left: 3px solid transparent;
+    background: transparent;
+}
+QListView::item:selected {
+    color: #38bdf8;
+    background-color: #121826;
+    border-left: 3px solid #38bdf8;
+}
+QListView::item:hover:!selected {
+    color: #e2e8f0;
+    background-color: #0d1322;
+}

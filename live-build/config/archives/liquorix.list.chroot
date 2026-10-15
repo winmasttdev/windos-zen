@@ -1,0 +1,11 @@
+# ============================================================================
+#  windOS Zen — Liquorix third-party kernel repository (chroot-only).
+#
+#  Staging (verified against live-build 20250505+deb13u1, chroot_archives):
+#    - *.list.chroot -> chroot/etc/apt/sources.list.d/liquorix.list
+#    - *.key.chroot  -> chroot/etc/apt/trusted.gpg.d/liquorix.key.chroot.gpg
+#      (non-armored keys get the ".gpg" suffix; armored keys get ".asc")
+#  so the signed-by path below matches exactly. The .chroot suffix means
+#  live-build removes both again once the kernel is installed.
+# ============================================================================
+deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/liquorix.key.chroot.gpg] https://liquorix.net/debian trixie main

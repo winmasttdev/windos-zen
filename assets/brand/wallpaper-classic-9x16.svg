@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- windOS Zen — CLASSIC wallpaper, NATIVE 9:16 portrait recompose (end card).
+     COPY of wallpaper-classic.svg for vertical video (do NOT use for landscape).
+     Single centred mark, whisper grid + aura, faint horizon, tiny wordmark. -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+     width="1080" height="1920" viewBox="0 0 1080 1920"
+     preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0"    stop-color="#0b1120"/>
+      <stop offset="0.55" stop-color="#090d16"/>
+      <stop offset="1"    stop-color="#05070d"/>
+    </linearGradient>
+    <radialGradient id="cyanOrb" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0.22"/>
+      <stop offset="0.6" stop-color="#38bdf8" stop-opacity="0.06"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="horizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"    stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="0.5"  stop-color="#38bdf8" stop-opacity="0.28"/>
+      <stop offset="1"    stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="grid" width="56" height="56" patternUnits="userSpaceOnUse">
+      <path d="M56 0H0V56" fill="none" stroke="#ffffff" stroke-opacity="0.022" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="vignette" cx="0.5" cy="0.42" r="0.85">
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0.55"/>
+    </radialGradient>
+    <filter id="softGlow" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.9" result="b"/>
+      <feFlood flood-color="#38bdf8" flood-opacity="0.32"/>
+      <feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="markStroke" x1="0.12" y1="0" x2="0.88" y2="1">
+      <stop offset="0"    stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#bae6fd"/>
+      <stop offset="1"    stop-color="#38bdf8"/>
+    </linearGradient>
+    <g id="mark24">
+      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"
+            fill="none" stroke="url(#markStroke)" stroke-width="2.2"
+            stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+    <linearGradient id="wordGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"    stop-color="#f8fafc"/>
+      <stop offset="0.62" stop-color="#e0f2fe"/>
+      <stop offset="1"    stop-color="#38bdf8"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1080" height="1920" fill="url(#sky)"/>
+  <rect width="1080" height="1920" fill="url(#grid)"/>
+
+  <!-- cyan aura, top-centre, narrowed for portrait -->
+  <ellipse cx="540" cy="-60" rx="560" ry="480" fill="url(#cyanOrb)"/>
+
+  <!-- faint wind streaks, kept inside portrait width -->
+  <g stroke-linecap="round" fill="none" opacity="0.45">
+    <path d="M120 560 H420"  stroke="#38bdf8" stroke-opacity="0.22" stroke-width="2"/>
+    <path d="M80 612 H340"  stroke="#38bdf8" stroke-opacity="0.13" stroke-width="2"/>
+    <path d="M660 1150 H960" stroke="#38bdf8" stroke-opacity="0.16" stroke-width="2"/>
+    <path d="M720 1198 H940" stroke="#38bdf8" stroke-opacity="0.10" stroke-width="2"/>
+  </g>
+
+  <!-- centred mark (~38% height) -->
+  <g transform="translate(540 740) scale(10) translate(-12 -12)" filter="url(#softGlow)">
+    <use xlink:href="#mark24"/>
+  </g>
+
+  <!-- tiny wordmark only -->
+  <text x="540" y="1032" text-anchor="middle" fill="url(#wordGrad)"
+        font-family="Plus Jakarta Sans, DejaVu Sans, sans-serif" font-weight="800"
+        font-size="34" letter-spacing="-1">windOS Zen</text>
+  <text x="540" y="1062" text-anchor="middle" fill="#94a3b8"
+        font-family="Plus Jakarta Sans, DejaVu Sans, sans-serif" font-weight="500"
+        font-size="12" letter-spacing="6">LIGHTER THAN AIR</text>
+
+  <rect x="0" y="1886" width="1080" height="2" fill="url(#horizon)"/>
+  <rect width="1080" height="1920" fill="url(#vignette)"/>
+</svg>

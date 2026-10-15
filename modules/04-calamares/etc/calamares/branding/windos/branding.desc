@@ -41,9 +41,15 @@ images:
 # exactly #090d16 (verified by border scan at render time). SidebarBackground
 # and the QSS chrome base (calamares.qss) use that same hex so the sidebar,
 # window frame and wallpaper meet with no black-on-deepblue seam.
+#
+# TEXT RULE: `style:` drives real text (sidebar steps via calamares-sidebar.qml
+# and ProgressTreeDelegate), so every key here must be light on #090d16.
+# SidebarText was #94a3b8 — light, but dim for 8pt step labels; #cbd5e1
+# (~9.8:1) matches the QSS secondary ramp. SidebarTextCurrent stays on the
+# #38bdf8 accent (~8.4:1).
 style:
    SidebarBackground:        "#090d16"
-   SidebarText:              "#94a3b8"
+   SidebarText:              "#cbd5e1"
    SidebarTextCurrent:       "#38bdf8"
    SidebarBackgroundCurrent: "#121826"
 

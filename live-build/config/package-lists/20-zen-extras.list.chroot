@@ -10,4 +10,3 @@ earlyoom
 linux-cpupower
 
 # entropy for legacy boxes without RDRAND (1 GB RAM VMs included)
-haveged

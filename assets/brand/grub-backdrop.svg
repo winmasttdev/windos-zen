@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  windOS Zen — GRUB boot backdrop master (Module 8)
+
+  WHY A DEDICATED MASTER (and not wallpaper-editorial.svg)
+
+  GRUB scales `desktop-image` to the EXACT screen size. With
+  `desktop-image-scale-method: "stretch"` (gfxmenu/view.c: init_background()
+  -> grub_video_bitmap_create_scaled(sw, sh)) that means the art is stretched,
+  not cropped — so the master must be distortion-tolerant and must carry NO
+  baked typography or logo.  The editorial wallpaper has both, and its
+  wordmark sits bottom-left exactly where the boot menu goes.
+
+  So this master is field only: the same warm-black ramp (#171410 -> #0e0d0b
+  -> #080706), the same cream hairline grid, the same single cyan aura as
+  assets/brand/wallpaper-editorial.svg — but the aura moves to the TOP RIGHT
+  and every decoration stays clear of the left-of-centre menu column that
+  theme.txt occupies.  The wordmark, tagline and selection colour are drawn by
+  the theme itself, so they stay crisp at any gfxmode instead of being baked
+  into a bitmap and then stretched.
+
+  GRUB also decodes the PNG at native size into a 4-byte-per-pixel bitmap
+  before scaling, so the render size is a memory decision, not a quality one:
+  1280x800 costs ~4 MB of EFI heap instead of ~8 MB for 1920x1080, and the
+  upscale to 1080p of a smooth gradient is indistinguishable from a native
+  render.  That is the conservative choice for the 1-2 GB laptops this distro
+  targets.
+
+  Render: rsvg-convert -w 1280 -h 800 grub-backdrop.svg
+           backdrop.png   (see tools/gen-assets.sh [8/8])
+-->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1280" height="800" viewBox="0 0 1280 800">
+  <defs>
+    <!-- same warm-black ramp as the editorial wallpaper -->
+    <linearGradient id="gsky" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0"    stop-color="#141310"/>
+      <stop offset="0.55" stop-color="#0d0c0a"/>
+      <stop offset="1"    stop-color="#070606"/>
+    </linearGradient>
+
+    <!-- one soft cyan aura, TOP RIGHT: opposite the menu column -->
+    <radialGradient id="gaura" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0"    stop-color="#38bdf8" stop-opacity="0.15"/>
+      <stop offset="0.55" stop-color="#38bdf8" stop-opacity="0.045"/>
+      <stop offset="1"    stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+
+    <linearGradient id="ghorizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"    stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="0.5"  stop-color="#38bdf8" stop-opacity="0.20"/>
+      <stop offset="1"    stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+
+    <!-- cream hairline grid, faint enough to survive the GRUB stretch -->
+    <pattern id="ggrid" width="96" height="96" patternUnits="userSpaceOnUse">
+      <path d="M96 0H0V96" fill="none" stroke="#ece5d8" stroke-opacity="0.045" stroke-width="1"/>
+    </pattern>
+
+    <radialGradient id="gvignette" cx="0.5" cy="0.42" r="0.80">
+      <stop offset="0.50" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0.55"/>
+    </radialGradient>
+
+    <!-- faint cyan rule anchoring the top-left of the menu column; the theme
+         paints the wordmark to its right, so this reads as a lockup rule -->
+    <linearGradient id="grule" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0.85"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="1920" height="1080" fill="url(#gsky)"/>
+  <rect width="1920" height="1080" fill="url(#ggrid)"/>
+
+  <!-- aura: high and right, away from the menu column -->
+  <ellipse cx="1560" cy="-140" rx="820" ry="560" fill="url(#gaura)"/>
+
+  <!-- lockup rule under the wordmark block; short + left-anchored.
+       y=120 of 800 is exactly 15% of the canvas, which is where theme.txt puts
+       the "LIGHTER THAN AIR" tagline — integer percentages only in a GRUB
+       theme, see parse_proportional_spec() and theme.txt. -->
+  <rect x="128" y="119" width="120" height="2" fill="url(#grule)"/>
+
+  <!-- catalogue hairline at the foot, same device as the wallpaper -->
+  <rect x="0" y="690" width="1280" height="2" fill="url(#ghorizon)"/>
+
+  <rect width="1920" height="1080" fill="url(#gvignette)"/>
+</svg>

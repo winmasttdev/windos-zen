@@ -18,6 +18,8 @@ fi
 systemctl enable earlyoom.service || true
 
 # --- daemons a lightweight distro has no business shipping awake -------------
+# (measured: fwupd alone idles 47 MB at 2G / 181 MB at 1G; the apt-daily
+#  timers and NM-wait-online sit on the critical boot chain)
 for svc in \
     avahi-daemon.service avahi-daemon.socket \
     bluetooth.service \
@@ -25,6 +27,13 @@ for svc in \
     ModemManager.service \
     wpa_supplicant.service \
     smartmontools.service \
+    NetworkManager-wait-online.service \
+    cron.service \
+    e2scrub_reap.service \
+    apt-daily.service apt-daily.timer \
+    apt-daily-upgrade.service apt-daily-upgrade.timer \
+    packagekit-offline-update.service \
+    fwupd.service fwupd-refresh.timer \
     ; do
     systemctl disable "$svc" 2>/dev/null || true
     systemctl mask    "$svc" 2>/dev/null || true
@@ -32,6 +41,41 @@ done
 # NetworkManager owns wifi; wpa_supplicant is pulled in by NM on demand, so
 # unmask it again — NM sockets-activates it.
 systemctl unmask wpa_supplicant.service 2>/dev/null || true
+
+# --- autostart miners that eat RAM on a read-only live rootfs ------------------
+# gnome-software/packagekit can't be purged (gnome-core hard-depends), so
+# neuter their autostart entries instead: same RAM win, zero dep risk.
+# (Append-or-replace one key; never clobber the .desktop itself.)
+mkdir -p /etc/xdg/autostart
+for app in localsearch-3 org.gnome.Software; do
+    f="/etc/xdg/autostart/$app.desktop"
+    [ -f "$f" ] || continue
+    if grep -q '^X-GNOME-Autostart-enabled=' "$f" 2>/dev/null; then
+        sed -i 's/^X-GNOME-Autostart-enabled=.*/X-GNOME-Autostart-enabled=false/' "$f" 2>/dev/null || true
+    else
+        printf '\nX-GNOME-Autostart-enabled=false\n' >> "$f" 2>/dev/null || true
+    fi
+done
+
+# --- locales: locales-all (236 MB) is Recommends-only, replace with curated set
+# Full set returns post-install via dispatcher (target has network + disk).
+apt-get purge -y locales-all 2>/dev/null || true
+apt-get install -y locales 2>/dev/null || true
+if command -v locale-gen >/dev/null 2>&1; then
+    cat > /etc/locale.gen <<'EOF'
+en_US.UTF-8 UTF-8
+uk_UA.UTF-8 UTF-8
+ru_RU.UTF-8 UTF-8
+de_DE.UTF-8 UTF-8
+fr_FR.UTF-8 UTF-8
+es_ES.UTF-8 UTF-8
+pl_PL.UTF-8 UTF-8
+pt_BR.UTF-8 UTF-8
+it_IT.UTF-8 UTF-8
+nl_NL.UTF-8 UTF-8
+EOF
+    locale-gen 2>/dev/null || true
+fi
 
 # --- journald: 32 MB cap, no persistent spill on the live session ------------
 mkdir -p /etc/systemd/journald.conf.d

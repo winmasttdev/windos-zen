@@ -24,13 +24,11 @@ papirus-icon-theme
 # --- launcher / terminal / files ------------------------------------------------
 gnome-terminal
 nautilus
-rofi
 
 # --- desktop furniture ----------------------------------------------------------
 evince
 gnome-system-monitor
 gparted
-conky-std
 
 # --- sysadmin kit -----------------------------------------------------------------
 htop

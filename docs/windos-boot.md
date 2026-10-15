@@ -1,7 +1,7 @@
 # windOS Boot
 
 windOS Boot is the small boot menu installed alongside your system (a port
-of the [MiniBoot](https://github.com/winmastt/miniboot) bootloader). It
+of the [MiniBoot](https://github.com/winmasttdev/miniboot) bootloader). It
 does **not** replace GRUB — it only *adds* a boot entry, first in the boot
 order, with GRUB kept as fallback.
 

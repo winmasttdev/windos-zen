@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- windOS Zen — EDITORIAL wallpaper, NATIVE 9:16 portrait recompose.
+     COPY of wallpaper-editorial.svg for vertical video (do NOT use for landscape).
+     Same Merodian language: warm black ramp, cream grid, single cyan aura,
+     small canonical mark, catalogue type bottom-left + edition tag top-right.
+     Recomposed for 1080x1920: aura narrowed, mark at 40% height, plaque
+     re-anchored to portrait bottom with 140px margins. -->
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="1080" height="1920" viewBox="0 0 1080 1920"
+     preserveAspectRatio="xMidYMid meet">
+  <defs>
+    <linearGradient id="esky" x1="0" y1="0" x2="0.35" y2="1">
+      <stop offset="0"    stop-color="#171410"/>
+      <stop offset="0.55" stop-color="#0e0d0b"/>
+      <stop offset="1"    stop-color="#080706"/>
+    </linearGradient>
+    <radialGradient id="ecyan" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0.16"/>
+      <stop offset="0.6" stop-color="#38bdf8" stop-opacity="0.05"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="ehorizon" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0"   stop-color="#38bdf8" stop-opacity="0"/>
+      <stop offset="0.5" stop-color="#38bdf8" stop-opacity="0.22"/>
+      <stop offset="1"   stop-color="#38bdf8" stop-opacity="0"/>
+    </linearGradient>
+    <pattern id="egrid" width="72" height="72" patternUnits="userSpaceOnUse">
+      <path d="M72 0H0V72" fill="none" stroke="#ece5d8" stroke-opacity="0.05" stroke-width="1"/>
+    </pattern>
+    <radialGradient id="evignette" cx="0.5" cy="0.42" r="0.85">
+      <stop offset="0.55" stop-color="#000000" stop-opacity="0"/>
+      <stop offset="1"    stop-color="#000000" stop-opacity="0.5"/>
+    </radialGradient>
+    <filter id="esoft" x="-150%" y="-150%" width="400%" height="400%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="0.9" result="b"/>
+      <feFlood flood-color="#38bdf8" flood-opacity="0.32"/>
+      <feComposite in2="b" operator="in" result="g"/>
+      <feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge>
+    </filter>
+    <linearGradient id="emark" x1="0.12" y1="0" x2="0.88" y2="1">
+      <stop offset="0"    stop-color="#ffffff"/>
+      <stop offset="0.45" stop-color="#bae6fd"/>
+      <stop offset="1"    stop-color="#38bdf8"/>
+    </linearGradient>
+    <g id="emark24">
+      <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"
+            fill="none" stroke="url(#emark)" stroke-width="2.2"
+            stroke-linejoin="round" stroke-linecap="round"/>
+    </g>
+  </defs>
+
+  <rect width="1080" height="1920" fill="url(#esky)"/>
+  <rect width="1080" height="1920" fill="url(#egrid)"/>
+
+  <!-- cyan aura, top-centre, narrowed for portrait -->
+  <ellipse cx="540" cy="-60" rx="560" ry="480" fill="url(#ecyan)"/>
+
+  <!-- small centred mark (~40% height) -->
+  <g transform="translate(540 760) scale(4) translate(-12 -12)" filter="url(#esoft)">
+    <use href="#emark24"/>
+  </g>
+
+  <!-- hairline rule under the mark -->
+  <rect x="476" y="930" width="128" height="1" fill="#ece5d8" opacity="0.18"/>
+
+  <!-- edition tag, top-right -->
+  <text x="1020" y="86" text-anchor="end"
+        font-family="Manrope, 'Plus Jakarta Sans', 'DejaVu Sans', sans-serif"
+        font-weight="500" font-size="13" letter-spacing="4"
+        fill="#ece5d8" fill-opacity="0.35">ZEN — Nº 01</text>
+
+  <!-- catalogue plaque, bottom-left -->
+  <rect x="140" y="1600" width="44" height="1" fill="#ece5d8" opacity="0.25"/>
+  <text x="140" y="1660"
+        font-family="Fraunces, Georgia, serif" font-style="italic" font-weight="400"
+        font-size="46" fill="#ece5d8" fill-opacity="0.85">windOS</text>
+  <text x="142" y="1692"
+        font-family="Manrope, 'Plus Jakarta Sans', 'DejaVu Sans', sans-serif"
+        font-weight="600" font-size="16" letter-spacing="6"
+        fill="#ece5d8" fill-opacity="0.45">LIGHTER THAN AIR</text>
+
+  <rect x="0" y="1886" width="1080" height="2" fill="url(#ehorizon)"/>
+  <rect width="1080" height="1920" fill="url(#evignette)"/>
+</svg>

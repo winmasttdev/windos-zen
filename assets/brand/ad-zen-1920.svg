@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080" viewBox="0 0 1920 1080">
+  <defs>
+    <linearGradient id="mStroke" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#ffffff"/>
+      <stop offset="0.55" stop-color="#bae6fd"/>
+      <stop offset="1" stop-color="#38bdf8"/>
+    </linearGradient>
+    <radialGradient id="aura" cx="0.5" cy="0.42" r="0.45">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.16"/>
+      <stop offset="1" stop-color="#38bdf8" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="1920" height="1080" fill="#0e0d0b"/>
+  <rect width="1920" height="1080" fill="url(#aura)"/>
+  <g stroke="#ece5d8" stroke-opacity="0.07">
+    <path d="M0 270 H1920 M0 540 H1920 M0 810 H1920 M480 0 V1080 M960 0 V1080 M1440 0 V1080"/>
+  </g>
+  <g transform="translate(885 195) scale(7)" fill="none" stroke="url(#mStroke)" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round">
+    <path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/>
+  </g>
+  <text x="960" y="590" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="120" fill="#ece5d8">windOS <tspan fill="#38bdf8">Zen</tspan></text>
+  <text x="960" y="652" text-anchor="middle" font-family="Verdana, sans-serif" font-size="30" letter-spacing="14" fill="#ece5d8" opacity="0.55">LIGHTER THAN AIR</text>
+  <g font-family="Verdana, sans-serif" font-size="34" fill="#c9d2de" text-anchor="middle">
+    <text x="960" y="752">Liquorix Zen-tuned kernel · zRAM on every boot</text>
+    <text x="960" y="807">Six desktops, one installer · Debian 13 inside</text>
+  </g>
+  <text x="960" y="990" text-anchor="middle" font-family="Verdana, sans-serif" font-size="26" letter-spacing="6" fill="#38bdf8">1.0 “BREEZE” — COMING SOON</text>
+</svg>

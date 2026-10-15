@@ -1,0 +1,13 @@
+#!/bin/sh
+# windOS Zen — pre-systemd welcome banner (initramfs, runs before real init)
+# Shown on console during a verbose boot (no `quiet` on the cmdline).
+PREREQ=""
+prereqs() { echo "$PREREQ"; }
+case $1 in prereqs) prereqs; exit 0;; esac
+
+. /scripts/functions
+
+log_begin_msg ""
+log_begin_msg "  windOS Zen: Booting into systemd ..."
+log_begin_msg "  Lighter Than Air — handing off to PID 1"
+log_end_msg
